@@ -1,21 +1,53 @@
 """
-AI service for CRM module using Google Gemini API.
+AI service for CRM module using OpenRouter (OpenAI-compatible API).
 """
-import google.generativeai as genai
 from app.core.config import settings
 from app.modules.crm.db_models import Lead
 
-# Configure Gemini
-genai.configure(api_key=settings.GEMINI_API_KEY)
+# Try to configure OpenRouter client; fall back gracefully if unavailable
+try:
+    from openai import OpenAI
+
+    _ai_client = OpenAI(
+        base_url=settings.OPENROUTER_BASE_URL,
+        api_key=settings.OPENROUTER_API_KEY,
+    )
+    _ai_available = bool(settings.OPENROUTER_API_KEY)
+    if not settings.OPENROUTER_API_KEY:
+        print("[ai_service] OPENROUTER_API_KEY is not set — AI features will use rule-based fallback")
+except (ImportError, Exception):
+    _ai_available = False
+    _ai_client = None
+    print("[ai_service] OpenRouter client could not be initialized — AI features will use rule-based fallback")
+
+
+AI_MODEL = "openai/gpt-4o-mini"
+
+
+def _call_llm(prompt: str) -> str | None:
+    """Call OpenRouter LLM and return the raw text response, or None on failure."""
+    if not _ai_available or not _ai_client:
+        return None
+    try:
+        resp = _ai_client.chat.completions.create(
+            model=AI_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.1,
+            max_tokens=1024,
+        )
+        return resp.choices[0].message.content.strip() or None
+    except Exception as e:
+        print(f"[ai_service] LLM call error: {e}")
+        return None
 
 
 def score_lead(lead: Lead) -> tuple[int, str]:
     """
-    Score a lead from 0–100 using Gemini AI.
+    Score a lead from 0–100 using AI.
     Returns (score, reason).
     """
-    if not settings.GEMINI_API_KEY:
-        return 50, "AI scoring not configured (set GEMINI_API_KEY)"
+    if not _ai_available:
+        return 50, "AI scoring not configured (set OPENROUTER_API_KEY)"
 
     # Build a compact prompt from lead data
     pipeline_id = lead.pipeline_id or "none"
@@ -31,23 +63,22 @@ def score_lead(lead: Lead) -> tuple[int, str]:
     prompt = f"""You are a lead scoring AI. Rate this lead 0-100 based on: value=${value}, source={source}, title="{title}", notes="{notes[:200]}", pipeline={pipeline_id}, phase={phase_id}, days_active={days_in_pipeline}. 
 Return ONLY a JSON object: {{"score": int, "reason": "short reason"}}. No markdown."""
 
-    try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        resp = model.generate_content(prompt)
-        text = resp.text.strip()
-        # Parse JSON from response
-        import json
-        # Find JSON boundaries
-        start = text.find("{")
-        end = text.rfind("}") + 1
-        if start >= 0 and end > start:
+    text = _call_llm(prompt)
+    if text is None:
+        return 50, "AI scoring unavailable"
+
+    import json
+    start = text.find("{")
+    end = text.rfind("}") + 1
+    if start >= 0 and end > start:
+        try:
             data = json.loads(text[start:end])
             score = max(0, min(100, int(data.get("score", 50))))
             reason = data.get("reason", "AI evaluated")[:120]
             return score, reason
-        return 50, "Could not parse AI response"
-    except Exception as e:
-        return 50, f"AI error: {str(e)[:80]}"
+        except Exception:
+            pass
+    return 50, "Could not parse AI response"
 
 
 def suggest_assignee(
@@ -59,11 +90,11 @@ def suggest_assignee(
     candidates: list[dict],
 ) -> list[dict]:
     """
-    Suggest best assignee(s) from a list of candidate employees using Gemini AI.
+    Suggest best assignee(s) from a list of candidate employees using AI.
     Each candidate: { id, name, role, department, current_lead_count }
     Returns top 3 sorted by confidence.
     """
-    if not settings.GEMINI_API_KEY:
+    if not _ai_available:
         return _suggest_assignee_fallback(candidates)
 
     candidate_lines = "\n".join(
@@ -90,16 +121,16 @@ Rules:
 
 Return ONLY a JSON array of objects: [{{"employee_id": int, "confidence": int 0-100, "reason": "short reason"}}]. No markdown. No more than 3."""
 
-    try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        resp = model.generate_content(prompt)
-        text = resp.text.strip()
-        import json
-        start = text.find("[")
-        end = text.rfind("]") + 1
-        if start >= 0 and end > start:
+    text = _call_llm(prompt)
+    if text is None:
+        return _suggest_assignee_fallback(candidates)
+
+    import json
+    start = text.find("[")
+    end = text.rfind("]") + 1
+    if start >= 0 and end > start:
+        try:
             suggestions = json.loads(text[start:end])
-            # Merge with candidate data
             result = []
             for s in suggestions[:3]:
                 emp_id = s.get("employee_id")
@@ -115,8 +146,8 @@ Return ONLY a JSON array of objects: [{{"employee_id": int, "confidence": int 0-
             if result:
                 result.sort(key=lambda x: x["confidence"], reverse=True)
                 return result
-    except Exception:
-        pass
+        except Exception:
+            pass
 
     return _suggest_assignee_fallback(candidates)
 
@@ -141,7 +172,7 @@ def next_best_action(lead: Lead, phases: list[dict]) -> dict:
     Analyze a lead and recommend the single most impactful next action.
     Returns { action, description, suggested_phase_id, urgency }.
     """
-    if not settings.GEMINI_API_KEY:
+    if not _ai_available:
         return _next_action_fallback(lead, phases)
 
     phase_map = {p["id"]: p["name"] for p in phases}
@@ -177,29 +208,28 @@ Return ONLY a JSON object:
 }}
 No markdown."""
 
-    try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        resp = model.generate_content(prompt)
-        text = resp.text.strip()
+    text = _call_llm(prompt)
+    if text is not None:
         import json
         start = text.find("{")
         end = text.rfind("}") + 1
         if start >= 0 and end > start:
-            data = json.loads(text[start:end])
-            action = data.get("action", "Follow up")[:80]
-            description = data.get("description", "")[:200]
-            suggested_phase_id = data.get("suggested_phase_id") or None
-            urgency = data.get("urgency", "medium")
-            if urgency not in ("high", "medium", "low"):
-                urgency = "medium"
-            return {
-                "action": action,
-                "description": description,
-                "suggested_phase_id": suggested_phase_id,
-                "urgency": urgency,
-            }
-    except Exception:
-        pass
+            try:
+                data = json.loads(text[start:end])
+                action = data.get("action", "Follow up")[:80]
+                description = data.get("description", "")[:200]
+                suggested_phase_id = data.get("suggested_phase_id") or None
+                urgency = data.get("urgency", "medium")
+                if urgency not in ("high", "medium", "low"):
+                    urgency = "medium"
+                return {
+                    "action": action,
+                    "description": description,
+                    "suggested_phase_id": suggested_phase_id,
+                    "urgency": urgency,
+                }
+            except Exception:
+                pass
 
     return _next_action_fallback(lead, phases)
 
@@ -211,7 +241,6 @@ def _next_action_fallback(lead: Lead, phases: list[dict]) -> dict:
     days_in_phase = len(history)
 
     if days_in_phase > 10:
-        # Stalled - suggest moving or follow-up
         next_phase = None
         for p in phases:
             if p["id"] != lead.phase_id:
@@ -242,7 +271,7 @@ def _next_action_fallback(lead: Lead, phases: list[dict]) -> dict:
 
 def pipeline_insights(leads: list[Lead], phases: list[dict]) -> dict:
     """
-    Analyze pipeline health using Gemini AI for rich, actionable insights.
+    Analyze pipeline health using AI for rich, actionable insights.
     Returns {
         insights: [{ severity, type, message, details, count, filter_query, lead_ids, action_label }],
         summary: { score, total_value, lead_count, top_risk, top_opportunity, recommendation }
@@ -254,7 +283,6 @@ def pipeline_insights(leads: list[Lead], phases: list[dict]) -> dict:
     total_value = sum(l.value or 0 for l in leads)
     total_count = len(leads)
 
-    # Build lead details for AI
     phase_map = {p["id"]: p["name"] for p in phases}
     lead_lines = []
     for l in leads:
@@ -327,33 +355,29 @@ def pipeline_insights(leads: list[Lead], phases: list[dict]) -> dict:
         '- filter_query can be "stalled", "phase=phase_id", or null'
     )
 
-    # Try Gemini first
+    # Try AI first
     ai_result = None
-    if settings.GEMINI_API_KEY:
-        try:
-            model = genai.GenerativeModel("gemini-2.0-flash")
-            resp = model.generate_content(prompt)
-            text = resp.text.strip()
+    if _ai_available:
+        text = _call_llm(prompt)
+        if text:
             import json
             start = text.find("{")
             end = text.rfind("}") + 1
             if start >= 0 and end > start:
-                data = json.loads(text[start:end])
-                if "insights" in data and isinstance(data["insights"], list):
-                    ai_result = data
-        except Exception as e:
-            print(f"[ai_service] pipeline_insights Gemini error: {e}")
+                try:
+                    data = json.loads(text[start:end])
+                    if "insights" in data and isinstance(data["insights"], list):
+                        ai_result = data
+                except Exception as e:
+                    print(f"[ai_service] pipeline_insights parse error: {e}")
 
-    # Merge AI insights with fallback rule-based analysis
     if ai_result:
         result = ai_result
-        # Ensure lead_ids are strings
         for ins in result.get("insights", []):
             if ins.get("lead_ids"):
                 ins["lead_ids"] = [str(lid) for lid in ins["lead_ids"] if lid]
         return result
 
-    # ── Fallback: rule-based analysis (when Gemini is unavailable) ──
     return _pipeline_insights_fallback(leads, phases, total_value, total_count)
 
 
@@ -465,10 +489,10 @@ def crm_chatbot(
 ) -> str:
     """
     CRM Chatbot: Answers user questions about CRM data only.
-    Uses Gemini AI with full CRM context to answer questions.
+    Uses AI with full CRM context to answer questions.
     Falls back to a rule-based response if AI is unavailable.
     """
-    if not settings.GEMINI_API_KEY:
+    if not _ai_available:
         return _crm_chatbot_fallback(message)
 
     # Build a compact summary of CRM data
@@ -518,13 +542,10 @@ User: {message}
 Respond conversationally and helpfully. Keep answers concise but informative. If the user asks for something you don't have data on, suggest what they can do in the CRM.
 Assistant:"""
 
-    try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        resp = model.generate_content(prompt)
-        text = resp.text.strip()
-        return text[:2000] if text else "I'm sorry, I couldn't generate a response. Please try again."
-    except Exception as e:
-        return f"I encountered an error: {str(e)[:100]}. Please try again later."
+    text = _call_llm(prompt)
+    if text:
+        return text[:2000]
+    return "I'm sorry, I couldn't generate a response. Please try again later."
 
 
 def _summarize_contacts(contacts: list[dict]) -> str:
@@ -593,25 +614,25 @@ def _summarize_tags(tags: list[dict]) -> str:
 def _crm_chatbot_fallback(message: str) -> str:
     """Fallback response when AI is unavailable."""
     msg_lower = message.lower()
-    
+
     if any(word in msg_lower for word in ["hello", "hi", "hey", "greetings"]):
         return "Hello! I'm your CRM assistant. I can help you with contacts, leads, pipelines, clients, and activities in your CRM. What would you like to know?"
-    
+
     if any(word in msg_lower for word in ["contact", "person", "people"]):
         return "I can help you with contact information. You can view, create, and manage contacts in the CRM. Try asking 'How many contacts do I have?' or 'Show me contacts from a specific company.'"
-    
+
     if any(word in msg_lower for word in ["lead", "pipeline", "deal", "opportunity"]):
         return "I can help with leads and pipelines. You can track leads through pipeline stages, assign team members, and score leads using AI. Try asking 'What leads are in my pipeline?' or 'Show me high-value leads.'"
-    
+
     if any(word in msg_lower for word in ["client", "customer"]):
         return "I can help with client information. Clients are converted from leads. You can track client status, tier, and account managers. Try asking 'How many active clients do I have?'"
-    
+
     if any(word in msg_lower for word in ["activity", "follow.up", "task"]):
         return "I can help with activities and follow-ups. Activities include calls, emails, meetings, and notes. Try asking 'What activities are due?' or 'Show me recent activity.'"
-    
+
     if any(word in msg_lower for word in ["tag", "label", "category"]):
         return "Tags help organize your contacts. You can filter contacts by tags in the CRM. Try asking 'What tags do I have?' or 'Show contacts with a specific tag.'"
-    
+
     return "I'm your CRM assistant. I can answer questions about your contacts, leads, pipelines, clients, activities, and tags. What would you like to know about your CRM data?"
 
 
