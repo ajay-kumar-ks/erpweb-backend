@@ -10,7 +10,6 @@ from app.core.event_bus import event_bus
 from app.core.event_handlers import register_event_handlers
 from app.core.database import engine
 from app.core.base import Base
-from app.core.tenant import TenantMiddleware
 import logging
 import time
 from app.modules.auth.routers import router as auth_router
