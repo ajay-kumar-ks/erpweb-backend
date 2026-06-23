@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
+from sqlalchemy.orm import joinedload
 import uuid
 from datetime import datetime
 from typing import List, Optional
@@ -364,7 +365,7 @@ async def list_leads(
     orphaned: Optional[bool] = Query(None, description="Filter leads with pipeline_id set but phase_id null"),
     db: Session = Depends(get_db)
 ):
-    query = db.query(Lead)
+    query = db.query(Lead).options(joinedload(Lead.contact), joinedload(Lead.pipeline), joinedload(Lead.phase))
 
     if pipeline_id:
         query = query.filter(Lead.pipeline_id == pipeline_id)

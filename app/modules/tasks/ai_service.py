@@ -18,6 +18,21 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 # ──────────────────────────────────────────────
+# OpenRouter URL helpers
+# ──────────────────────────────────────────────
+
+def _normalize_openrouter_base_url(base_url: str) -> str:
+    url = (base_url or "").strip()
+    if url.endswith("/"):
+        url = url[:-1]
+
+    if url.startswith("https://api.openrouter.ai"):
+        url = url.replace("https://api.openrouter.ai", "https://openrouter.ai/api")
+    if url == "https://openrouter.ai/v1":
+        url = "https://openrouter.ai/api/v1"
+    return url
+
+# ──────────────────────────────────────────────
 # Client initialisation
 # ──────────────────────────────────────────────
 
@@ -34,8 +49,15 @@ def _get_client() -> OpenAI:
                 "OPENROUTER_API_KEY is not configured. "
                 "Set it in your .env file."
             )
+        base_url = _normalize_openrouter_base_url(settings.OPENROUTER_BASE_URL)
+        if not base_url:
+            raise ValueError(
+                "OPENROUTER_BASE_URL is not configured. "
+                "Set it in your .env file."
+            )
+        logger.info("OpenRouter base_url=%s", base_url)
         _client = OpenAI(
-            base_url=settings.OPENROUTER_BASE_URL,
+            base_url=base_url,
             api_key=api_key,
             default_headers={
                 "HTTP-Referer": "https://business-suite.local",

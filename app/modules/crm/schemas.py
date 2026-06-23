@@ -224,6 +224,9 @@ class LeadSchema(LeadBaseSchema):
     id: str
     created_at: datetime
     updated_at: datetime
+    contact: Optional[ContactSchema] = None
+    pipeline: Optional[PipelineSchema] = None
+    phase: Optional[PhaseSchema] = None
 
     class Config:
         from_attributes = True

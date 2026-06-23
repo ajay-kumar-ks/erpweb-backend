@@ -2,20 +2,36 @@ from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import Session
 from app.core.event_bus import event_bus
-from app.modules.accounts.models import JournalEntry, JournalLine
+from app.modules.accounts.models import ChartOfAccount, JournalEntry, JournalLine
 from app.modules.accounts.transaction_models import Expense, Income
+from app.core.database import commit_or_rollback
+
+
+def _get_cash_account_id(db: Session) -> int:
+    account = db.query(ChartOfAccount.id).filter(ChartOfAccount.account_code == "1000").first()
+    if account:
+        return account[0]
+
+    account = db.query(ChartOfAccount.id).filter(ChartOfAccount.account_code == "1100").first()
+    if account:
+        return account[0]
+
+    account = db.query(ChartOfAccount.id).filter(ChartOfAccount.account_type.ilike("asset")).first()
+    if account:
+        return account[0]
+
+    raise ValueError("No cash or asset account found in the chart of accounts.")
 
 
 def create_expense_journal(db: Session, expense: Expense) -> JournalEntry:
     """
     Create a journal entry for an expense.
     Debit: Expense Account
-    Credit: Cash/Bank (account_id 1100)
+    Credit: Cash/Bank
     """
-    cash_account_id = 2
+    cash_account_id = _get_cash_account_id(db)
 
     journal = JournalEntry(
-        tenant_id=expense.tenant_id,
         reference=expense.reference or f"EXP-{expense.id}",
         description=f"Expense: {expense.description}",
         status="draft",
@@ -25,7 +41,6 @@ def create_expense_journal(db: Session, expense: Expense) -> JournalEntry:
     db.flush()
 
     debit_line = JournalLine(
-        tenant_id=expense.tenant_id,
         journal_id=journal.id,
         account_id=expense.account_id,
         memo=expense.description,
@@ -35,7 +50,6 @@ def create_expense_journal(db: Session, expense: Expense) -> JournalEntry:
     db.add(debit_line)
 
     credit_line = JournalLine(
-        tenant_id=expense.tenant_id,
         journal_id=journal.id,
         account_id=cash_account_id,
         memo=f"Payment for {expense.description}",
@@ -44,7 +58,7 @@ def create_expense_journal(db: Session, expense: Expense) -> JournalEntry:
     )
     db.add(credit_line)
 
-    db.commit()
+    commit_or_rollback(db)
     db.refresh(journal)
     return journal
 
@@ -52,13 +66,12 @@ def create_expense_journal(db: Session, expense: Expense) -> JournalEntry:
 def create_income_journal(db: Session, income: Income) -> JournalEntry:
     """
     Create a journal entry for income.
-    Debit: Cash/Bank (account_id 1100)
+    Debit: Cash/Bank
     Credit: Income Account
     """
-    cash_account_id = 2
+    cash_account_id = _get_cash_account_id(db)
 
     journal = JournalEntry(
-        tenant_id=income.tenant_id,
         reference=income.reference or f"INC-{income.id}",
         description=f"Income: {income.description}",
         status="draft",
@@ -68,7 +81,6 @@ def create_income_journal(db: Session, income: Income) -> JournalEntry:
     db.flush()
 
     debit_line = JournalLine(
-        tenant_id=income.tenant_id,
         journal_id=journal.id,
         account_id=cash_account_id,
         memo=f"Receipt from {income.description}",
@@ -78,7 +90,6 @@ def create_income_journal(db: Session, income: Income) -> JournalEntry:
     db.add(debit_line)
 
     credit_line = JournalLine(
-        tenant_id=income.tenant_id,
         journal_id=journal.id,
         account_id=income.account_id,
         memo=income.description,
@@ -87,6 +98,6 @@ def create_income_journal(db: Session, income: Income) -> JournalEntry:
     )
     db.add(credit_line)
 
-    db.commit()
+    commit_or_rollback(db)
     db.refresh(journal)
     return journal

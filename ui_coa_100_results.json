@@ -1,0 +1,2102 @@
+[
+  {
+    "index": 0,
+    "payload": {
+      "account_code": "RCOA-1782085526-0",
+      "account_name": "RCOA Test 0",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 111,
+      "account_code": "RCOA-1782085526-0",
+      "account_name": "RCOA Test 0",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:26.975103",
+      "updated_at": "2026-06-22T05:15:26.975107"
+    }
+  },
+  {
+    "index": 1,
+    "payload": {
+      "account_code": "RCOA-1782085528-1",
+      "account_name": "RCOA Test 1",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 112,
+      "account_code": "RCOA-1782085528-1",
+      "account_name": "RCOA Test 1",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:28.919620",
+      "updated_at": "2026-06-22T05:15:28.919624"
+    }
+  },
+  {
+    "index": 2,
+    "payload": {
+      "account_code": "RCOA-1782085530-2",
+      "account_name": "RCOA Test 2",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 113,
+      "account_code": "RCOA-1782085530-2",
+      "account_name": "RCOA Test 2",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:30.751440",
+      "updated_at": "2026-06-22T05:15:30.751444"
+    }
+  },
+  {
+    "index": 3,
+    "payload": {
+      "account_code": "RCOA-1782085532-3",
+      "account_name": "RCOA Test 3",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 114,
+      "account_code": "RCOA-1782085532-3",
+      "account_name": "RCOA Test 3",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:32.601309",
+      "updated_at": "2026-06-22T05:15:32.601314"
+    }
+  },
+  {
+    "index": 4,
+    "payload": {
+      "account_code": "RCOA-1782085534-4",
+      "account_name": "RCOA Test 4",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 115,
+      "account_code": "RCOA-1782085534-4",
+      "account_name": "RCOA Test 4",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:34.438514",
+      "updated_at": "2026-06-22T05:15:34.438518"
+    }
+  },
+  {
+    "index": 5,
+    "payload": {
+      "account_code": "RCOA-1782085535-5",
+      "account_name": "RCOA Test 5",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 116,
+      "account_code": "RCOA-1782085535-5",
+      "account_name": "RCOA Test 5",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:36.258565",
+      "updated_at": "2026-06-22T05:15:36.258570"
+    }
+  },
+  {
+    "index": 6,
+    "payload": {
+      "account_code": "RCOA-1782085537-6",
+      "account_name": "RCOA Test 6",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 117,
+      "account_code": "RCOA-1782085537-6",
+      "account_name": "RCOA Test 6",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:38.151767",
+      "updated_at": "2026-06-22T05:15:38.151771"
+    }
+  },
+  {
+    "index": 7,
+    "payload": {
+      "account_code": "RCOA-1782085539-7",
+      "account_name": "RCOA Test 7",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 118,
+      "account_code": "RCOA-1782085539-7",
+      "account_name": "RCOA Test 7",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:39.994530",
+      "updated_at": "2026-06-22T05:15:39.994535"
+    }
+  },
+  {
+    "index": 8,
+    "payload": {
+      "account_code": "RCOA-1782085541-8",
+      "account_name": "RCOA Test 8",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 119,
+      "account_code": "RCOA-1782085541-8",
+      "account_name": "RCOA Test 8",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:41.851462",
+      "updated_at": "2026-06-22T05:15:41.851467"
+    }
+  },
+  {
+    "index": 9,
+    "payload": {
+      "account_code": "RCOA-1782085543-9",
+      "account_name": "RCOA Test 9",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 120,
+      "account_code": "RCOA-1782085543-9",
+      "account_name": "RCOA Test 9",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:43.704889",
+      "updated_at": "2026-06-22T05:15:43.704894"
+    }
+  },
+  {
+    "index": 10,
+    "payload": {
+      "account_code": "RCOA-1782085545-10",
+      "account_name": "RCOA Test 10",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 121,
+      "account_code": "RCOA-1782085545-10",
+      "account_name": "RCOA Test 10",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:45.870389",
+      "updated_at": "2026-06-22T05:15:45.870392"
+    }
+  },
+  {
+    "index": 11,
+    "payload": {
+      "account_code": "RCOA-1782085547-11",
+      "account_name": "RCOA Test 11",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 122,
+      "account_code": "RCOA-1782085547-11",
+      "account_name": "RCOA Test 11",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:48.049966",
+      "updated_at": "2026-06-22T05:15:48.049969"
+    }
+  },
+  {
+    "index": 12,
+    "payload": {
+      "account_code": "RCOA-1782085549-12",
+      "account_name": "RCOA Test 12",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 123,
+      "account_code": "RCOA-1782085549-12",
+      "account_name": "RCOA Test 12",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:50.007020",
+      "updated_at": "2026-06-22T05:15:50.007024"
+    }
+  },
+  {
+    "index": 13,
+    "payload": {
+      "account_code": "RCOA-1782085551-13",
+      "account_name": "RCOA Test 13",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 124,
+      "account_code": "RCOA-1782085551-13",
+      "account_name": "RCOA Test 13",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:51.830756",
+      "updated_at": "2026-06-22T05:15:51.830761"
+    }
+  },
+  {
+    "index": 14,
+    "payload": {
+      "account_code": "RCOA-1782085553-14",
+      "account_name": "RCOA Test 14",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 125,
+      "account_code": "RCOA-1782085553-14",
+      "account_name": "RCOA Test 14",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:53.672301",
+      "updated_at": "2026-06-22T05:15:53.672305"
+    }
+  },
+  {
+    "index": 15,
+    "payload": {
+      "account_code": "RCOA-1782085555-15",
+      "account_name": "RCOA Test 15",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 126,
+      "account_code": "RCOA-1782085555-15",
+      "account_name": "RCOA Test 15",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:55.499381",
+      "updated_at": "2026-06-22T05:15:55.499386"
+    }
+  },
+  {
+    "index": 16,
+    "payload": {
+      "account_code": "RCOA-1782085557-16",
+      "account_name": "RCOA Test 16",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 127,
+      "account_code": "RCOA-1782085557-16",
+      "account_name": "RCOA Test 16",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:57.327850",
+      "updated_at": "2026-06-22T05:15:57.327855"
+    }
+  },
+  {
+    "index": 17,
+    "payload": {
+      "account_code": "RCOA-1782085558-17",
+      "account_name": "RCOA Test 17",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 128,
+      "account_code": "RCOA-1782085558-17",
+      "account_name": "RCOA Test 17",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:15:59.193087",
+      "updated_at": "2026-06-22T05:15:59.193092"
+    }
+  },
+  {
+    "index": 18,
+    "payload": {
+      "account_code": "RCOA-1782085560-18",
+      "account_name": "RCOA Test 18",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 129,
+      "account_code": "RCOA-1782085560-18",
+      "account_name": "RCOA Test 18",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:01.046351",
+      "updated_at": "2026-06-22T05:16:01.046356"
+    }
+  },
+  {
+    "index": 19,
+    "payload": {
+      "account_code": "RCOA-1782085562-19",
+      "account_name": "RCOA Test 19",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 130,
+      "account_code": "RCOA-1782085562-19",
+      "account_name": "RCOA Test 19",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:02.987886",
+      "updated_at": "2026-06-22T05:16:02.987892"
+    }
+  },
+  {
+    "index": 20,
+    "payload": {
+      "account_code": "RCOA-1782085564-20",
+      "account_name": "RCOA Test 20",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 131,
+      "account_code": "RCOA-1782085564-20",
+      "account_name": "RCOA Test 20",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:04.833224",
+      "updated_at": "2026-06-22T05:16:04.833228"
+    }
+  },
+  {
+    "index": 21,
+    "payload": {
+      "account_code": "RCOA-1782085566-21",
+      "account_name": "RCOA Test 21",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 132,
+      "account_code": "RCOA-1782085566-21",
+      "account_name": "RCOA Test 21",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:06.698780",
+      "updated_at": "2026-06-22T05:16:06.698783"
+    }
+  },
+  {
+    "index": 22,
+    "payload": {
+      "account_code": "RCOA-1782085568-22",
+      "account_name": "RCOA Test 22",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 133,
+      "account_code": "RCOA-1782085568-22",
+      "account_name": "RCOA Test 22",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:08.531767",
+      "updated_at": "2026-06-22T05:16:08.531771"
+    }
+  },
+  {
+    "index": 23,
+    "payload": {
+      "account_code": "RCOA-1782085570-23",
+      "account_name": "RCOA Test 23",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 134,
+      "account_code": "RCOA-1782085570-23",
+      "account_name": "RCOA Test 23",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:10.481640",
+      "updated_at": "2026-06-22T05:16:10.481645"
+    }
+  },
+  {
+    "index": 24,
+    "payload": {
+      "account_code": "RCOA-1782085572-24",
+      "account_name": "RCOA Test 24",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 135,
+      "account_code": "RCOA-1782085572-24",
+      "account_name": "RCOA Test 24",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:12.313095",
+      "updated_at": "2026-06-22T05:16:12.313099"
+    }
+  },
+  {
+    "index": 25,
+    "payload": {
+      "account_code": "RCOA-1782085573-25",
+      "account_name": "RCOA Test 25",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 136,
+      "account_code": "RCOA-1782085573-25",
+      "account_name": "RCOA Test 25",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:14.141883",
+      "updated_at": "2026-06-22T05:16:14.141887"
+    }
+  },
+  {
+    "index": 26,
+    "payload": {
+      "account_code": "RCOA-1782085575-26",
+      "account_name": "RCOA Test 26",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 137,
+      "account_code": "RCOA-1782085575-26",
+      "account_name": "RCOA Test 26",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:15.983114",
+      "updated_at": "2026-06-22T05:16:15.983121"
+    }
+  },
+  {
+    "index": 27,
+    "payload": {
+      "account_code": "RCOA-1782085577-27",
+      "account_name": "RCOA Test 27",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 138,
+      "account_code": "RCOA-1782085577-27",
+      "account_name": "RCOA Test 27",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:17.820173",
+      "updated_at": "2026-06-22T05:16:17.820179"
+    }
+  },
+  {
+    "index": 28,
+    "payload": {
+      "account_code": "RCOA-1782085579-28",
+      "account_name": "RCOA Test 28",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 139,
+      "account_code": "RCOA-1782085579-28",
+      "account_name": "RCOA Test 28",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:19.664276",
+      "updated_at": "2026-06-22T05:16:19.664279"
+    }
+  },
+  {
+    "index": 29,
+    "payload": {
+      "account_code": "RCOA-1782085581-29",
+      "account_name": "RCOA Test 29",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 140,
+      "account_code": "RCOA-1782085581-29",
+      "account_name": "RCOA Test 29",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:21.507094",
+      "updated_at": "2026-06-22T05:16:21.507098"
+    }
+  },
+  {
+    "index": 30,
+    "payload": {
+      "account_code": "RCOA-1782085583-30",
+      "account_name": "RCOA Test 30",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 141,
+      "account_code": "RCOA-1782085583-30",
+      "account_name": "RCOA Test 30",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:23.368858",
+      "updated_at": "2026-06-22T05:16:23.368862"
+    }
+  },
+  {
+    "index": 31,
+    "payload": {
+      "account_code": "RCOA-1782085584-31",
+      "account_name": "RCOA Test 31",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 142,
+      "account_code": "RCOA-1782085584-31",
+      "account_name": "RCOA Test 31",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:25.203728",
+      "updated_at": "2026-06-22T05:16:25.203732"
+    }
+  },
+  {
+    "index": 32,
+    "payload": {
+      "account_code": "RCOA-1782085586-32",
+      "account_name": "RCOA Test 32",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 143,
+      "account_code": "RCOA-1782085586-32",
+      "account_name": "RCOA Test 32",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:27.049067",
+      "updated_at": "2026-06-22T05:16:27.049070"
+    }
+  },
+  {
+    "index": 33,
+    "payload": {
+      "account_code": "RCOA-1782085588-33",
+      "account_name": "RCOA Test 33",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 144,
+      "account_code": "RCOA-1782085588-33",
+      "account_name": "RCOA Test 33",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:28.908432",
+      "updated_at": "2026-06-22T05:16:28.908436"
+    }
+  },
+  {
+    "index": 34,
+    "payload": {
+      "account_code": "RCOA-1782085590-34",
+      "account_name": "RCOA Test 34",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 145,
+      "account_code": "RCOA-1782085590-34",
+      "account_name": "RCOA Test 34",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:30.807944",
+      "updated_at": "2026-06-22T05:16:30.807948"
+    }
+  },
+  {
+    "index": 35,
+    "payload": {
+      "account_code": "RCOA-1782085592-35",
+      "account_name": "RCOA Test 35",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 146,
+      "account_code": "RCOA-1782085592-35",
+      "account_name": "RCOA Test 35",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:32.633888",
+      "updated_at": "2026-06-22T05:16:32.633893"
+    }
+  },
+  {
+    "index": 36,
+    "payload": {
+      "account_code": "RCOA-1782085594-36",
+      "account_name": "RCOA Test 36",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 147,
+      "account_code": "RCOA-1782085594-36",
+      "account_name": "RCOA Test 36",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:34.504078",
+      "updated_at": "2026-06-22T05:16:34.504082"
+    }
+  },
+  {
+    "index": 37,
+    "payload": {
+      "account_code": "RCOA-1782085596-37",
+      "account_name": "RCOA Test 37",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 148,
+      "account_code": "RCOA-1782085596-37",
+      "account_name": "RCOA Test 37",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:36.391251",
+      "updated_at": "2026-06-22T05:16:36.391256"
+    }
+  },
+  {
+    "index": 38,
+    "payload": {
+      "account_code": "RCOA-1782085597-38",
+      "account_name": "RCOA Test 38",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 149,
+      "account_code": "RCOA-1782085597-38",
+      "account_name": "RCOA Test 38",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:38.215253",
+      "updated_at": "2026-06-22T05:16:38.215257"
+    }
+  },
+  {
+    "index": 39,
+    "payload": {
+      "account_code": "RCOA-1782085599-39",
+      "account_name": "RCOA Test 39",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 150,
+      "account_code": "RCOA-1782085599-39",
+      "account_name": "RCOA Test 39",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:40.043428",
+      "updated_at": "2026-06-22T05:16:40.043432"
+    }
+  },
+  {
+    "index": 40,
+    "payload": {
+      "account_code": "RCOA-1782085601-40",
+      "account_name": "RCOA Test 40",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 151,
+      "account_code": "RCOA-1782085601-40",
+      "account_name": "RCOA Test 40",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:41.894151",
+      "updated_at": "2026-06-22T05:16:41.894156"
+    }
+  },
+  {
+    "index": 41,
+    "payload": {
+      "account_code": "RCOA-1782085603-41",
+      "account_name": "RCOA Test 41",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 152,
+      "account_code": "RCOA-1782085603-41",
+      "account_name": "RCOA Test 41",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:43.753223",
+      "updated_at": "2026-06-22T05:16:43.753227"
+    }
+  },
+  {
+    "index": 42,
+    "payload": {
+      "account_code": "RCOA-1782085605-42",
+      "account_name": "RCOA Test 42",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 153,
+      "account_code": "RCOA-1782085605-42",
+      "account_name": "RCOA Test 42",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:45.599919",
+      "updated_at": "2026-06-22T05:16:45.599923"
+    }
+  },
+  {
+    "index": 43,
+    "payload": {
+      "account_code": "RCOA-1782085607-43",
+      "account_name": "RCOA Test 43",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 154,
+      "account_code": "RCOA-1782085607-43",
+      "account_name": "RCOA Test 43",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:47.481450",
+      "updated_at": "2026-06-22T05:16:47.481456"
+    }
+  },
+  {
+    "index": 44,
+    "payload": {
+      "account_code": "RCOA-1782085609-44",
+      "account_name": "RCOA Test 44",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 155,
+      "account_code": "RCOA-1782085609-44",
+      "account_name": "RCOA Test 44",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:49.561148",
+      "updated_at": "2026-06-22T05:16:49.561152"
+    }
+  },
+  {
+    "index": 45,
+    "payload": {
+      "account_code": "RCOA-1782085611-45",
+      "account_name": "RCOA Test 45",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 156,
+      "account_code": "RCOA-1782085611-45",
+      "account_name": "RCOA Test 45",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:51.388639",
+      "updated_at": "2026-06-22T05:16:51.388643"
+    }
+  },
+  {
+    "index": 46,
+    "payload": {
+      "account_code": "RCOA-1782085612-46",
+      "account_name": "RCOA Test 46",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 157,
+      "account_code": "RCOA-1782085612-46",
+      "account_name": "RCOA Test 46",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:53.218514",
+      "updated_at": "2026-06-22T05:16:53.218519"
+    }
+  },
+  {
+    "index": 47,
+    "payload": {
+      "account_code": "RCOA-1782085614-47",
+      "account_name": "RCOA Test 47",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 158,
+      "account_code": "RCOA-1782085614-47",
+      "account_name": "RCOA Test 47",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:55.044389",
+      "updated_at": "2026-06-22T05:16:55.044394"
+    }
+  },
+  {
+    "index": 48,
+    "payload": {
+      "account_code": "RCOA-1782085616-48",
+      "account_name": "RCOA Test 48",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 159,
+      "account_code": "RCOA-1782085616-48",
+      "account_name": "RCOA Test 48",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:56.896803",
+      "updated_at": "2026-06-22T05:16:56.896808"
+    }
+  },
+  {
+    "index": 49,
+    "payload": {
+      "account_code": "RCOA-1782085618-49",
+      "account_name": "RCOA Test 49",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 160,
+      "account_code": "RCOA-1782085618-49",
+      "account_name": "RCOA Test 49",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:16:58.763544",
+      "updated_at": "2026-06-22T05:16:58.763548"
+    }
+  },
+  {
+    "index": 50,
+    "payload": {
+      "account_code": "RCOA-1782085620-50",
+      "account_name": "RCOA Test 50",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 161,
+      "account_code": "RCOA-1782085620-50",
+      "account_name": "RCOA Test 50",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:00.592334",
+      "updated_at": "2026-06-22T05:17:00.592339"
+    }
+  },
+  {
+    "index": 51,
+    "payload": {
+      "account_code": "RCOA-1782085622-51",
+      "account_name": "RCOA Test 51",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 162,
+      "account_code": "RCOA-1782085622-51",
+      "account_name": "RCOA Test 51",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:02.445729",
+      "updated_at": "2026-06-22T05:17:02.445733"
+    }
+  },
+  {
+    "index": 52,
+    "payload": {
+      "account_code": "RCOA-1782085624-52",
+      "account_name": "RCOA Test 52",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 163,
+      "account_code": "RCOA-1782085624-52",
+      "account_name": "RCOA Test 52",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:04.313268",
+      "updated_at": "2026-06-22T05:17:04.313273"
+    }
+  },
+  {
+    "index": 53,
+    "payload": {
+      "account_code": "RCOA-1782085625-53",
+      "account_name": "RCOA Test 53",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 164,
+      "account_code": "RCOA-1782085625-53",
+      "account_name": "RCOA Test 53",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:06.213783",
+      "updated_at": "2026-06-22T05:17:06.213787"
+    }
+  },
+  {
+    "index": 54,
+    "payload": {
+      "account_code": "RCOA-1782085627-54",
+      "account_name": "RCOA Test 54",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 165,
+      "account_code": "RCOA-1782085627-54",
+      "account_name": "RCOA Test 54",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:08.057812",
+      "updated_at": "2026-06-22T05:17:08.057816"
+    }
+  },
+  {
+    "index": 55,
+    "payload": {
+      "account_code": "RCOA-1782085629-55",
+      "account_name": "RCOA Test 55",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 166,
+      "account_code": "RCOA-1782085629-55",
+      "account_name": "RCOA Test 55",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:09.902341",
+      "updated_at": "2026-06-22T05:17:09.902345"
+    }
+  },
+  {
+    "index": 56,
+    "payload": {
+      "account_code": "RCOA-1782085631-56",
+      "account_name": "RCOA Test 56",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 167,
+      "account_code": "RCOA-1782085631-56",
+      "account_name": "RCOA Test 56",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:11.763850",
+      "updated_at": "2026-06-22T05:17:11.763854"
+    }
+  },
+  {
+    "index": 57,
+    "payload": {
+      "account_code": "RCOA-1782085633-57",
+      "account_name": "RCOA Test 57",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 168,
+      "account_code": "RCOA-1782085633-57",
+      "account_name": "RCOA Test 57",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:13.626739",
+      "updated_at": "2026-06-22T05:17:13.626743"
+    }
+  },
+  {
+    "index": 58,
+    "payload": {
+      "account_code": "RCOA-1782085635-58",
+      "account_name": "RCOA Test 58",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 169,
+      "account_code": "RCOA-1782085635-58",
+      "account_name": "RCOA Test 58",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:15.494499",
+      "updated_at": "2026-06-22T05:17:15.494502"
+    }
+  },
+  {
+    "index": 59,
+    "payload": {
+      "account_code": "RCOA-1782085637-59",
+      "account_name": "RCOA Test 59",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 170,
+      "account_code": "RCOA-1782085637-59",
+      "account_name": "RCOA Test 59",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:17.334202",
+      "updated_at": "2026-06-22T05:17:17.334209"
+    }
+  },
+  {
+    "index": 60,
+    "payload": {
+      "account_code": "RCOA-1782085638-60",
+      "account_name": "RCOA Test 60",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 171,
+      "account_code": "RCOA-1782085638-60",
+      "account_name": "RCOA Test 60",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:19.202071",
+      "updated_at": "2026-06-22T05:17:19.202075"
+    }
+  },
+  {
+    "index": 61,
+    "payload": {
+      "account_code": "RCOA-1782085640-61",
+      "account_name": "RCOA Test 61",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 172,
+      "account_code": "RCOA-1782085640-61",
+      "account_name": "RCOA Test 61",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:21.050228",
+      "updated_at": "2026-06-22T05:17:21.050242"
+    }
+  },
+  {
+    "index": 62,
+    "payload": {
+      "account_code": "RCOA-1782085642-62",
+      "account_name": "RCOA Test 62",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 173,
+      "account_code": "RCOA-1782085642-62",
+      "account_name": "RCOA Test 62",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:22.884179",
+      "updated_at": "2026-06-22T05:17:22.884183"
+    }
+  },
+  {
+    "index": 63,
+    "payload": {
+      "account_code": "RCOA-1782085644-63",
+      "account_name": "RCOA Test 63",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 174,
+      "account_code": "RCOA-1782085644-63",
+      "account_name": "RCOA Test 63",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:24.707127",
+      "updated_at": "2026-06-22T05:17:24.707131"
+    }
+  },
+  {
+    "index": 64,
+    "payload": {
+      "account_code": "RCOA-1782085646-64",
+      "account_name": "RCOA Test 64",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 175,
+      "account_code": "RCOA-1782085646-64",
+      "account_name": "RCOA Test 64",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:26.551460",
+      "updated_at": "2026-06-22T05:17:26.551463"
+    }
+  },
+  {
+    "index": 65,
+    "payload": {
+      "account_code": "RCOA-1782085648-65",
+      "account_name": "RCOA Test 65",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 176,
+      "account_code": "RCOA-1782085648-65",
+      "account_name": "RCOA Test 65",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:28.382736",
+      "updated_at": "2026-06-22T05:17:28.382742"
+    }
+  },
+  {
+    "index": 66,
+    "payload": {
+      "account_code": "RCOA-1782085650-66",
+      "account_name": "RCOA Test 66",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 177,
+      "account_code": "RCOA-1782085650-66",
+      "account_name": "RCOA Test 66",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:30.358404",
+      "updated_at": "2026-06-22T05:17:30.358408"
+    }
+  },
+  {
+    "index": 67,
+    "payload": {
+      "account_code": "RCOA-1782085651-67",
+      "account_name": "RCOA Test 67",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 178,
+      "account_code": "RCOA-1782085651-67",
+      "account_name": "RCOA Test 67",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:32.234178",
+      "updated_at": "2026-06-22T05:17:32.234182"
+    }
+  },
+  {
+    "index": 68,
+    "payload": {
+      "account_code": "RCOA-1782085653-68",
+      "account_name": "RCOA Test 68",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 179,
+      "account_code": "RCOA-1782085653-68",
+      "account_name": "RCOA Test 68",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:34.083758",
+      "updated_at": "2026-06-22T05:17:34.083763"
+    }
+  },
+  {
+    "index": 69,
+    "payload": {
+      "account_code": "RCOA-1782085655-69",
+      "account_name": "RCOA Test 69",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 180,
+      "account_code": "RCOA-1782085655-69",
+      "account_name": "RCOA Test 69",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:35.929929",
+      "updated_at": "2026-06-22T05:17:35.929933"
+    }
+  },
+  {
+    "index": 70,
+    "payload": {
+      "account_code": "RCOA-1782085657-70",
+      "account_name": "RCOA Test 70",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 181,
+      "account_code": "RCOA-1782085657-70",
+      "account_name": "RCOA Test 70",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:37.907962",
+      "updated_at": "2026-06-22T05:17:37.907967"
+    }
+  },
+  {
+    "index": 71,
+    "payload": {
+      "account_code": "RCOA-1782085659-71",
+      "account_name": "RCOA Test 71",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 182,
+      "account_code": "RCOA-1782085659-71",
+      "account_name": "RCOA Test 71",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:39.772349",
+      "updated_at": "2026-06-22T05:17:39.772354"
+    }
+  },
+  {
+    "index": 72,
+    "payload": {
+      "account_code": "RCOA-1782085661-72",
+      "account_name": "RCOA Test 72",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 183,
+      "account_code": "RCOA-1782085661-72",
+      "account_name": "RCOA Test 72",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:41.598039",
+      "updated_at": "2026-06-22T05:17:41.598042"
+    }
+  },
+  {
+    "index": 73,
+    "payload": {
+      "account_code": "RCOA-1782085663-73",
+      "account_name": "RCOA Test 73",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 184,
+      "account_code": "RCOA-1782085663-73",
+      "account_name": "RCOA Test 73",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:43.507753",
+      "updated_at": "2026-06-22T05:17:43.507761"
+    }
+  },
+  {
+    "index": 74,
+    "payload": {
+      "account_code": "RCOA-1782085665-74",
+      "account_name": "RCOA Test 74",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 185,
+      "account_code": "RCOA-1782085665-74",
+      "account_name": "RCOA Test 74",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:45.350881",
+      "updated_at": "2026-06-22T05:17:45.350884"
+    }
+  },
+  {
+    "index": 75,
+    "payload": {
+      "account_code": "RCOA-1782085666-75",
+      "account_name": "RCOA Test 75",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 186,
+      "account_code": "RCOA-1782085666-75",
+      "account_name": "RCOA Test 75",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:47.181148",
+      "updated_at": "2026-06-22T05:17:47.181152"
+    }
+  },
+  {
+    "index": 76,
+    "payload": {
+      "account_code": "RCOA-1782085668-76",
+      "account_name": "RCOA Test 76",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 187,
+      "account_code": "RCOA-1782085668-76",
+      "account_name": "RCOA Test 76",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:49.006898",
+      "updated_at": "2026-06-22T05:17:49.006901"
+    }
+  },
+  {
+    "index": 77,
+    "payload": {
+      "account_code": "RCOA-1782085670-77",
+      "account_name": "RCOA Test 77",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 188,
+      "account_code": "RCOA-1782085670-77",
+      "account_name": "RCOA Test 77",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:50.851711",
+      "updated_at": "2026-06-22T05:17:50.851715"
+    }
+  },
+  {
+    "index": 78,
+    "payload": {
+      "account_code": "RCOA-1782085673-78",
+      "account_name": "RCOA Test 78",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 189,
+      "account_code": "RCOA-1782085673-78",
+      "account_name": "RCOA Test 78",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:53.695080",
+      "updated_at": "2026-06-22T05:17:53.695084"
+    }
+  },
+  {
+    "index": 79,
+    "payload": {
+      "account_code": "RCOA-1782085675-79",
+      "account_name": "RCOA Test 79",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 190,
+      "account_code": "RCOA-1782085675-79",
+      "account_name": "RCOA Test 79",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:55.551057",
+      "updated_at": "2026-06-22T05:17:55.551061"
+    }
+  },
+  {
+    "index": 80,
+    "payload": {
+      "account_code": "RCOA-1782085677-80",
+      "account_name": "RCOA Test 80",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 191,
+      "account_code": "RCOA-1782085677-80",
+      "account_name": "RCOA Test 80",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:57.382685",
+      "updated_at": "2026-06-22T05:17:57.382689"
+    }
+  },
+  {
+    "index": 81,
+    "payload": {
+      "account_code": "RCOA-1782085678-81",
+      "account_name": "RCOA Test 81",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 192,
+      "account_code": "RCOA-1782085678-81",
+      "account_name": "RCOA Test 81",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:17:59.215612",
+      "updated_at": "2026-06-22T05:17:59.215615"
+    }
+  },
+  {
+    "index": 82,
+    "payload": {
+      "account_code": "RCOA-1782085680-82",
+      "account_name": "RCOA Test 82",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 193,
+      "account_code": "RCOA-1782085680-82",
+      "account_name": "RCOA Test 82",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:01.039985",
+      "updated_at": "2026-06-22T05:18:01.039989"
+    }
+  },
+  {
+    "index": 83,
+    "payload": {
+      "account_code": "RCOA-1782085682-83",
+      "account_name": "RCOA Test 83",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 194,
+      "account_code": "RCOA-1782085682-83",
+      "account_name": "RCOA Test 83",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:02.869738",
+      "updated_at": "2026-06-22T05:18:02.869741"
+    }
+  },
+  {
+    "index": 84,
+    "payload": {
+      "account_code": "RCOA-1782085684-84",
+      "account_name": "RCOA Test 84",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 195,
+      "account_code": "RCOA-1782085684-84",
+      "account_name": "RCOA Test 84",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:04.693015",
+      "updated_at": "2026-06-22T05:18:04.693019"
+    }
+  },
+  {
+    "index": 85,
+    "payload": {
+      "account_code": "RCOA-1782085686-85",
+      "account_name": "RCOA Test 85",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 196,
+      "account_code": "RCOA-1782085686-85",
+      "account_name": "RCOA Test 85",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:06.521937",
+      "updated_at": "2026-06-22T05:18:06.521941"
+    }
+  },
+  {
+    "index": 86,
+    "payload": {
+      "account_code": "RCOA-1782085688-86",
+      "account_name": "RCOA Test 86",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 197,
+      "account_code": "RCOA-1782085688-86",
+      "account_name": "RCOA Test 86",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:08.354344",
+      "updated_at": "2026-06-22T05:18:08.354350"
+    }
+  },
+  {
+    "index": 87,
+    "payload": {
+      "account_code": "RCOA-1782085689-87",
+      "account_name": "RCOA Test 87",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 198,
+      "account_code": "RCOA-1782085689-87",
+      "account_name": "RCOA Test 87",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:10.252067",
+      "updated_at": "2026-06-22T05:18:10.252071"
+    }
+  },
+  {
+    "index": 88,
+    "payload": {
+      "account_code": "RCOA-1782085691-88",
+      "account_name": "RCOA Test 88",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 199,
+      "account_code": "RCOA-1782085691-88",
+      "account_name": "RCOA Test 88",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:12.090401",
+      "updated_at": "2026-06-22T05:18:12.090406"
+    }
+  },
+  {
+    "index": 89,
+    "payload": {
+      "account_code": "RCOA-1782085693-89",
+      "account_name": "RCOA Test 89",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 200,
+      "account_code": "RCOA-1782085693-89",
+      "account_name": "RCOA Test 89",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:13.989046",
+      "updated_at": "2026-06-22T05:18:13.989050"
+    }
+  },
+  {
+    "index": 90,
+    "payload": {
+      "account_code": "RCOA-1782085695-90",
+      "account_name": "RCOA Test 90",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 201,
+      "account_code": "RCOA-1782085695-90",
+      "account_name": "RCOA Test 90",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:15.865279",
+      "updated_at": "2026-06-22T05:18:15.865284"
+    }
+  },
+  {
+    "index": 91,
+    "payload": {
+      "account_code": "RCOA-1782085697-91",
+      "account_name": "RCOA Test 91",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 202,
+      "account_code": "RCOA-1782085697-91",
+      "account_name": "RCOA Test 91",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:17.700393",
+      "updated_at": "2026-06-22T05:18:17.700396"
+    }
+  },
+  {
+    "index": 92,
+    "payload": {
+      "account_code": "RCOA-1782085699-92",
+      "account_name": "RCOA Test 92",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 203,
+      "account_code": "RCOA-1782085699-92",
+      "account_name": "RCOA Test 92",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:19.553620",
+      "updated_at": "2026-06-22T05:18:19.553625"
+    }
+  },
+  {
+    "index": 93,
+    "payload": {
+      "account_code": "RCOA-1782085701-93",
+      "account_name": "RCOA Test 93",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 204,
+      "account_code": "RCOA-1782085701-93",
+      "account_name": "RCOA Test 93",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:21.425469",
+      "updated_at": "2026-06-22T05:18:21.425474"
+    }
+  },
+  {
+    "index": 94,
+    "payload": {
+      "account_code": "RCOA-1782085702-94",
+      "account_name": "RCOA Test 94",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 205,
+      "account_code": "RCOA-1782085702-94",
+      "account_name": "RCOA Test 94",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:23.269345",
+      "updated_at": "2026-06-22T05:18:23.269350"
+    }
+  },
+  {
+    "index": 95,
+    "payload": {
+      "account_code": "RCOA-1782085704-95",
+      "account_name": "RCOA Test 95",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 206,
+      "account_code": "RCOA-1782085704-95",
+      "account_name": "RCOA Test 95",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:25.144237",
+      "updated_at": "2026-06-22T05:18:25.144242"
+    }
+  },
+  {
+    "index": 96,
+    "payload": {
+      "account_code": "RCOA-1782085706-96",
+      "account_name": "RCOA Test 96",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 207,
+      "account_code": "RCOA-1782085706-96",
+      "account_name": "RCOA Test 96",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:26.994339",
+      "updated_at": "2026-06-22T05:18:26.994344"
+    }
+  },
+  {
+    "index": 97,
+    "payload": {
+      "account_code": "RCOA-1782085708-97",
+      "account_name": "RCOA Test 97",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 208,
+      "account_code": "RCOA-1782085708-97",
+      "account_name": "RCOA Test 97",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:28.825394",
+      "updated_at": "2026-06-22T05:18:28.825398"
+    }
+  },
+  {
+    "index": 98,
+    "payload": {
+      "account_code": "RCOA-1782085710-98",
+      "account_name": "RCOA Test 98",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 209,
+      "account_code": "RCOA-1782085710-98",
+      "account_name": "RCOA Test 98",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:30.649805",
+      "updated_at": "2026-06-22T05:18:30.649809"
+    }
+  },
+  {
+    "index": 99,
+    "payload": {
+      "account_code": "RCOA-1782085712-99",
+      "account_name": "RCOA Test 99",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 210,
+      "account_code": "RCOA-1782085712-99",
+      "account_name": "RCOA Test 99",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:18:32.490887",
+      "updated_at": "2026-06-22T05:18:32.490891"
+    }
+  }
+]

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, DateTime, Boolean, Integer, JSON, ForeignKey, Table
+from sqlalchemy import Column, String, Text, DateTime, Boolean, Integer, JSON, ForeignKey, Table, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.base import Base
@@ -44,12 +44,18 @@ class Contact(Base):
         cascade="all, delete"
     )
     activities = relationship("Activity", back_populates="contact", cascade="all, delete-orphan")
+    leads = relationship("Lead", back_populates="contact")
     
     # Timestamps
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
     archived_at = Column(DateTime, nullable=True)
     deleted_at = Column(DateTime, nullable=True)
+    __table_args__ = (
+        # common lookup patterns
+        Index("ix_contacts_status", "status"),
+        Index("ix_contacts_company_name", "company", "name"),
+    )
 
 
 class Tag(Base):
@@ -106,6 +112,8 @@ class Pipeline(Base):
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
+    leads = relationship("Lead", back_populates="pipeline")
+
 
 class Phase(Base):
     __tablename__ = "phases"
@@ -120,6 +128,8 @@ class Phase(Base):
 
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+
+    leads = relationship("Lead", back_populates="phase")
 
 
 class PipelineAssignment(Base):
@@ -155,6 +165,19 @@ class Lead(Base):
 
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    __table_args__ = (
+        # queries frequently filter by pipeline/phase/assignee and order by created_at
+        Index("ix_leads_pipeline_id", "pipeline_id"),
+        Index("ix_leads_phase_id", "phase_id"),
+        Index("ix_leads_assignee", "assignee"),
+        Index("ix_leads_created_at", "created_at"),
+        Index("ix_leads_value", "value"),
+    )
+
+    # Relationships for convenient eager-loading
+    contact = relationship("Contact", back_populates="leads", lazy="joined")
+    pipeline = relationship("Pipeline", back_populates="leads", lazy="joined")
+    phase = relationship("Phase", back_populates="leads", lazy="joined")
 
 
 class Client(Base):

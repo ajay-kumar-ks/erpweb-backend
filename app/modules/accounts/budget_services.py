@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, and_
 from app.modules.accounts.models import LedgerEntry
 from app.core.event_bus import event_bus
+from app.core.database import commit_or_rollback
 
 
 def calculate_budget_consumption(db: Session, budget_line) -> None:
@@ -12,7 +13,6 @@ def calculate_budget_consumption(db: Session, budget_line) -> None:
         db.query(func.sum(LedgerEntry.debit).label("total_spent"))
         .filter(
             LedgerEntry.account_id == budget_line.account_id,
-            LedgerEntry.tenant_id == budget_line.tenant_id,
         )
         .first()
     )
@@ -36,4 +36,4 @@ def calculate_budget_consumption(db: Session, budget_line) -> None:
                 },
             )
 
-    db.commit()
+    commit_or_rollback(db)

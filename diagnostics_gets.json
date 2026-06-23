@@ -1,0 +1,10 @@
+{
+  "http://127.0.0.1:8000/api/accounts/invoices": {
+    "status": 200,
+    "text": "[{\"id\":1,\"customer_id\":1,\"invoice_number\":\"INV-REQ-1\",\"invoice_date\":\"2026-06-22T05:06:37.930781Z\",\"due_date\":\"2026-07-22T05:06:37.930799Z\",\"amount\":1500.0,\"paid_amount\":1500.0,\"status\":\"paid\",\"description\":\"Req invoice\",\"journal_id\":11,\"created_at\":\"2026-06-22T05:06:38.193085\",\"updated_at\":\"2026-06-22T05:06:49.685772\"}]"
+  },
+  "http://127.0.0.1:8000/api/accounts/bills": {
+    "status": 500,
+    "text": "Internal Server Error"
+  }
+}

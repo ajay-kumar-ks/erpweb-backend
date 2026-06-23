@@ -8,7 +8,6 @@ def _make_event_recorder(event_type: str):
         db = SessionLocal()
         try:
             event_record = EventStore(
-                tenant_id=payload.get("tenant_id"),
                 event_type=event_type,
                 payload=payload,
                 processed=False,

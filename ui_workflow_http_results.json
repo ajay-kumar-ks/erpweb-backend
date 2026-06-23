@@ -1,0 +1,309 @@
+[
+  {
+    "endpoint": "POST /coa",
+    "payload": {
+      "account_code": "1001",
+      "account_name": "Req Account 1",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 4,
+      "account_code": "1001",
+      "account_name": "Req Account 1",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:06:16.155564",
+      "updated_at": "2026-06-22T05:06:16.155570"
+    }
+  },
+  {
+    "endpoint": "POST /coa",
+    "payload": {
+      "account_code": "1002",
+      "account_name": "Req Account 2",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 500,
+    "body": "Internal Server Error"
+  },
+  {
+    "endpoint": "POST /coa",
+    "payload": {
+      "account_code": "1003",
+      "account_name": "Req Account 3",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 5,
+      "account_code": "1003",
+      "account_name": "Req Account 3",
+      "account_type": "asset",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:06:20.869893",
+      "updated_at": "2026-06-22T05:06:20.869897"
+    }
+  },
+  {
+    "endpoint": "POST /coa",
+    "payload": {
+      "account_code": "1004",
+      "account_name": "Req Account 4",
+      "account_type": "liability",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 6,
+      "account_code": "1004",
+      "account_name": "Req Account 4",
+      "account_type": "liability",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:06:22.711604",
+      "updated_at": "2026-06-22T05:06:22.711609"
+    }
+  },
+  {
+    "endpoint": "POST /coa",
+    "payload": {
+      "account_code": "1005",
+      "account_name": "Req Account 5",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 7,
+      "account_code": "1005",
+      "account_name": "Req Account 5",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:06:24.536005",
+      "updated_at": "2026-06-22T05:06:24.536009"
+    }
+  },
+  {
+    "endpoint": "POST /coa",
+    "payload": {
+      "account_code": "1006",
+      "account_name": "Req Account 6",
+      "account_type": "revenue",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 8,
+      "account_code": "1006",
+      "account_name": "Req Account 6",
+      "account_type": "revenue",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:06:26.371157",
+      "updated_at": "2026-06-22T05:06:26.371164"
+    }
+  },
+  {
+    "endpoint": "POST /coa",
+    "payload": {
+      "account_code": "1007",
+      "account_name": "Req Account 7",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true
+    },
+    "status": 200,
+    "body": {
+      "id": 9,
+      "account_code": "1007",
+      "account_name": "Req Account 7",
+      "account_type": "expense",
+      "parent_account_id": null,
+      "is_active": true,
+      "created_at": "2026-06-22T05:06:28.215523",
+      "updated_at": "2026-06-22T05:06:28.215527"
+    }
+  },
+  {
+    "endpoint": "POST /budgets",
+    "payload": {
+      "name": "Req Test Budget",
+      "fiscal_year": 2026,
+      "total_amount": 10000.0,
+      "start_date": "2026-06-22",
+      "end_date": "2027-06-22",
+      "status": "draft"
+    },
+    "status": 200,
+    "body": {
+      "id": 2,
+      "name": "Req Test Budget",
+      "fiscal_year": 2026,
+      "total_amount": 10000.0,
+      "status": "draft",
+      "start_date": "2026-06-22T00:00:00Z",
+      "end_date": "2027-06-22T00:00:00Z",
+      "created_at": "2026-06-22T05:06:30.051003",
+      "updated_at": "2026-06-22T05:06:30.051007"
+    }
+  },
+  {
+    "endpoint": "POST /budgets/2/lines",
+    "payload": {
+      "account_id": 4,
+      "allocated_amount": 5000.0
+    },
+    "status": 200,
+    "body": {
+      "id": 1,
+      "budget_id": 2,
+      "account_id": 4,
+      "allocated_amount": 5000.0,
+      "spent_amount": 0.0,
+      "consumed_percentage": 0.0,
+      "created_at": "2026-06-22T05:06:33.470191",
+      "updated_at": "2026-06-22T05:06:33.470195"
+    }
+  },
+  {
+    "endpoint": "POST /customers",
+    "payload": {
+      "name": "Req Customer",
+      "email": "rc@example.com"
+    },
+    "status": 200,
+    "body": {
+      "id": 1,
+      "name": "Req Customer",
+      "email": "rc@example.com",
+      "phone": null,
+      "address": null,
+      "is_active": "active",
+      "created_at": "2026-06-22T05:06:36.363361",
+      "updated_at": "2026-06-22T05:06:36.363365"
+    }
+  },
+  {
+    "endpoint": "POST /invoices",
+    "payload": {
+      "customer_id": 1,
+      "invoice_number": "INV-REQ-1",
+      "invoice_date": "2026-06-22T05:06:37.930781",
+      "due_date": "2026-07-22T05:06:37.930799",
+      "amount": 1500.0,
+      "description": "Req invoice"
+    },
+    "status": 200,
+    "body": {
+      "id": 1,
+      "customer_id": 1,
+      "invoice_number": "INV-REQ-1",
+      "invoice_date": "2026-06-22T05:06:37.930781Z",
+      "due_date": "2026-07-22T05:06:37.930799Z",
+      "amount": 1500.0,
+      "paid_amount": 0.0,
+      "status": "draft",
+      "description": "Req invoice",
+      "journal_id": 11,
+      "created_at": "2026-06-22T05:06:38.193085",
+      "updated_at": "2026-06-22T05:06:42.700593"
+    }
+  },
+  {
+    "endpoint": "POST /invoices/1/payments",
+    "payload": {
+      "invoice_id": 1,
+      "payment_date": "2026-06-22T05:06:44.106512",
+      "amount": 1500.0,
+      "reference": "PAY-REQ-1"
+    },
+    "status": 200,
+    "body": {
+      "id": 1,
+      "invoice_id": 1,
+      "payment_date": "2026-06-22T05:06:44.106512Z",
+      "amount": 1500.0,
+      "reference": "PAY-REQ-1",
+      "journal_id": 12,
+      "created_at": "2026-06-22T05:06:44.894290",
+      "updated_at": "2026-06-22T05:06:49.945730"
+    }
+  },
+  {
+    "endpoint": "POST /vendors",
+    "payload": {
+      "name": "Req Vendor",
+      "email": "rv@example.com"
+    },
+    "status": 200,
+    "body": {
+      "id": 1,
+      "name": "Req Vendor",
+      "email": "rv@example.com",
+      "phone": null,
+      "address": null,
+      "is_active": "active",
+      "created_at": "2026-06-22T05:06:51.521146",
+      "updated_at": "2026-06-22T05:06:51.521150"
+    }
+  },
+  {
+    "endpoint": "POST /bills",
+    "payload": {
+      "vendor_id": 1,
+      "bill_number": "BILL-REQ-1",
+      "bill_date": "2026-06-22T05:06:53.089914",
+      "due_date": "2026-07-22T05:06:53.089926",
+      "amount": 800.0,
+      "description": "Req bill"
+    },
+    "status": 200,
+    "body": {
+      "id": 1,
+      "vendor_id": 1,
+      "bill_number": "BILL-REQ-1",
+      "bill_date": "2026-06-22T05:06:53.089914Z",
+      "due_date": "2026-07-22T05:06:53.089926Z",
+      "amount": 800.0,
+      "paid_amount": 0.0,
+      "status": "draft",
+      "description": "Req bill",
+      "journal_id": 13,
+      "created_at": "2026-06-22T05:06:53.353863",
+      "updated_at": "2026-06-22T05:06:58.168752"
+    }
+  },
+  {
+    "endpoint": "POST /bills/1/payments",
+    "payload": {
+      "bill_id": 1,
+      "payment_date": "2026-06-22T05:06:59.480963",
+      "amount": 800.0,
+      "reference": "BP-REQ-1"
+    },
+    "status": 200,
+    "body": {
+      "id": 1,
+      "bill_id": 1,
+      "payment_date": "2026-06-22T05:06:59.480963Z",
+      "amount": 800.0,
+      "reference": "BP-REQ-1",
+      "journal_id": 14,
+      "created_at": "2026-06-22T05:07:00.277389",
+      "updated_at": "2026-06-22T05:07:05.484483"
+    }
+  }
+]

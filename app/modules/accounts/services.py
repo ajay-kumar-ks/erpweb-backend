@@ -1,10 +1,10 @@
-import uuid
 from datetime import datetime
 from decimal import Decimal
 from typing import List
 from sqlalchemy.orm import Session
 from app.core.event_bus import event_bus
 from app.modules.accounts.models import ChartOfAccount, JournalEntry, JournalLine, LedgerEntry
+from app.core.database import commit_or_rollback
 
 DEFAULT_COA_ENTRIES = [
     {"account_code": "1000", "account_name": "Cash", "account_type": "Asset"},
@@ -18,12 +18,10 @@ DEFAULT_COA_ENTRIES = [
 
 
 
-def seed_default_chart_of_accounts(db: Session, tenant_id: uuid.UUID) -> None:
+def seed_default_chart_of_accounts(db: Session) -> None:
     existing_codes = {
         row[0]
-        for row in db.query(ChartOfAccount.account_code)
-        .filter(ChartOfAccount.tenant_id == tenant_id)
-        .all()
+        for row in db.query(ChartOfAccount.account_code).all()
     }
 
     entries = []
@@ -31,7 +29,6 @@ def seed_default_chart_of_accounts(db: Session, tenant_id: uuid.UUID) -> None:
         if entry["account_code"] in existing_codes:
             continue
         account = ChartOfAccount(
-            tenant_id=tenant_id,
             account_code=entry["account_code"],
             account_name=entry["account_name"],
             account_type=entry["account_type"],
@@ -41,7 +38,7 @@ def seed_default_chart_of_accounts(db: Session, tenant_id: uuid.UUID) -> None:
 
     if entries:
         db.add_all(entries)
-        db.commit()
+        commit_or_rollback(db)
 
 
 
@@ -77,12 +74,10 @@ def post_journal_entry(db: Session, journal_entry: JournalEntry) -> JournalEntry
     # Query lines explicitly since relationship was removed
     lines = db.query(JournalLine).filter(
         JournalLine.journal_id == journal_entry.id,
-        JournalLine.tenant_id == journal_entry.tenant_id
     ).all()
 
     for line in lines:
         ledger_entry = LedgerEntry(
-            tenant_id=journal_entry.tenant_id,
             journal_id=journal_entry.id,
             account_id=line.account_id,
             debit=line.debit,
@@ -93,13 +88,12 @@ def post_journal_entry(db: Session, journal_entry: JournalEntry) -> JournalEntry
 
     journal_entry.status = "posted"
     journal_entry.posted_at = datetime.utcnow()
-    db.commit()
+    commit_or_rollback(db)
     db.refresh(journal_entry)
 
     event_bus.publish(
         "journal.posted",
         {
-            "tenant_id": str(journal_entry.tenant_id),
             "journal_id": journal_entry.id,
             "reference": journal_entry.reference,
             "description": journal_entry.description,

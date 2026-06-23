@@ -1,0 +1,3385 @@
+2026-06-22 11:34:41,641 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-06-22 11:34:41,641 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-22 11:34:42,133 INFO sqlalchemy.engine.Engine select current_schema()
+2026-06-22 11:34:42,133 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-22 11:34:42,614 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-06-22 11:34:42,614 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-22 11:34:43,805 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:43,807 INFO sqlalchemy.engine.Engine INSERT INTO chart_of_accounts (account_code, account_name, account_type, parent_account_id, is_active, created_at, updated_at) VALUES (%(account_code)s, %(account_name)s, %(account_type)s, %(parent_account_id)s, %(is_active)s, %(created_at)s, %(updated_at)s) RETURNING chart_of_accounts.id
+2026-06-22 11:34:43,807 INFO sqlalchemy.engine.Engine [generated in 0.00054s] {'account_code': '1000', 'account_name': 'Cash', 'account_type': 'asset', 'parent_account_id': None, 'is_active': True, 'created_at': datetime.datetime(2026, 6, 22, 6, 4, 43, 807191), 'updated_at': datetime.datetime(2026, 6, 22, 6, 4, 43, 807195)}
+2026-06-22 11:34:44,055 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:34:44,537 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:44,539 INFO sqlalchemy.engine.Engine SELECT chart_of_accounts.id AS chart_of_accounts_id, chart_of_accounts.account_code AS chart_of_accounts_account_code, chart_of_accounts.account_name AS chart_of_accounts_account_name, chart_of_accounts.account_type AS chart_of_accounts_account_type, chart_of_accounts.parent_account_id AS chart_of_accounts_parent_account_id, chart_of_accounts.is_active AS chart_of_accounts_is_active, chart_of_accounts.created_at AS chart_of_accounts_created_at, chart_of_accounts.updated_at AS chart_of_accounts_updated_at 
+FROM chart_of_accounts ORDER BY chart_of_accounts.account_code
+2026-06-22 11:34:44,539 INFO sqlalchemy.engine.Engine [generated in 0.00025s] {}
+2026-06-22 11:34:45,285 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:34:45,826 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:45,828 INFO sqlalchemy.engine.Engine SELECT chart_of_accounts.id AS chart_of_accounts_id 
+FROM chart_of_accounts 
+WHERE chart_of_accounts.id IN (%(id_1_1)s, %(id_1_2)s)
+2026-06-22 11:34:45,828 INFO sqlalchemy.engine.Engine [generated in 0.00045s] {'id_1_1': 1, 'id_1_2': 1}
+2026-06-22 11:34:46,596 INFO sqlalchemy.engine.Engine INSERT INTO journal_entries (reference, description, status, date, submitted_at, approved_at, posted_at, created_at, updated_at) VALUES (%(reference)s, %(description)s, %(status)s, %(date)s, %(submitted_at)s, %(approved_at)s, %(posted_at)s, %(created_at)s, %(updated_at)s) RETURNING journal_entries.id
+2026-06-22 11:34:46,596 INFO sqlalchemy.engine.Engine [generated in 0.00024s] {'reference': 'JRN-001', 'description': 'Test Journal', 'status': 'draft', 'date': datetime.datetime(2026, 6, 22, 0, 0), 'submitted_at': None, 'approved_at': None, 'posted_at': None, 'created_at': datetime.datetime(2026, 6, 22, 6, 4, 46, 596749), 'updated_at': datetime.datetime(2026, 6, 22, 6, 4, 46, 596754)}
+2026-06-22 11:34:46,841 INFO sqlalchemy.engine.Engine INSERT INTO journal_lines (journal_id, account_id, memo, debit, credit, created_at, updated_at) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::NUMERIC(14, 2), p4::NUMERIC(14, 2), p5::TIMESTAMP WITHOUT TIME ZONE, p6::TIMESTAMP WITHOUT TIME ZONE FRO ... 282 characters truncated ...  p4, p5, p6, sen_counter) ORDER BY sen_counter RETURNING journal_lines.id, journal_lines.id AS id__1
+2026-06-22 11:34:46,841 INFO sqlalchemy.engine.Engine [generated in 0.00012s (insertmanyvalues) 1/1 (ordered)] {'debit__0': Decimal('100.0'), 'journal_id__0': 18, 'memo__0': 'Debit line', 'created_at__0': datetime.datetime(2026, 6, 22, 6, 4, 46, 841285), 'account_id__0': 1, 'updated_at__0': datetime.datetime(2026, 6, 22, 6, 4, 46, 841290), 'credit__0': Decimal('0.0'), 'debit__1': Decimal('0.0'), 'journal_id__1': 18, 'memo__1': 'Credit line', 'created_at__1': datetime.datetime(2026, 6, 22, 6, 4, 46, 841291), 'account_id__1': 1, 'updated_at__1': datetime.datetime(2026, 6, 22, 6, 4, 46, 841292), 'credit__1': Decimal('100.0')}
+2026-06-22 11:34:47,087 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:34:47,573 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:47,574 INFO sqlalchemy.engine.Engine SELECT journal_entries.id, journal_entries.reference, journal_entries.description, journal_entries.status, journal_entries.date, journal_entries.submitted_at, journal_entries.approved_at, journal_entries.posted_at, journal_entries.created_at, journal_entries.updated_at 
+FROM journal_entries 
+WHERE journal_entries.id = %(pk_1)s
+2026-06-22 11:34:47,574 INFO sqlalchemy.engine.Engine [generated in 0.00014s] {'pk_1': 18}
+2026-06-22 11:34:48,065 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:48,065 INFO sqlalchemy.engine.Engine [generated in 0.00018s] {'param_1': 18}
+2026-06-22 11:34:48,314 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:34:48,796 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:48,797 INFO sqlalchemy.engine.Engine SELECT journal_entries.id AS journal_entries_id, journal_entries.reference AS journal_entries_reference, journal_entries.description AS journal_entries_description, journal_entries.status AS journal_entries_status, journal_entries.date AS journal_entries_date, journal_entries.submitted_at AS journal_entries_submitted_at, journal_entries.approved_at AS journal_entries_approved_at, journal_entries.posted_at AS journal_entries_posted_at, journal_entries.created_at AS journal_entries_created_at, journal_entries.updated_at AS journal_entries_updated_at 
+FROM journal_entries ORDER BY journal_entries.date DESC
+2026-06-22 11:34:48,797 INFO sqlalchemy.engine.Engine [generated in 0.00014s] {}
+2026-06-22 11:34:49,280 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE journal_lines.journal_id IN (%(journal_id_1_1)s, %(journal_id_1_2)s, %(journal_id_1_3)s, %(journal_id_1_4)s, %(journal_id_1_5)s, %(journal_id_1_6)s, %(journal_id_1_7)s, %(journal_id_1_8)s, %(journal_id_1_9)s, %(journal_id_1_10)s, %(journal_id_1_11)s, %(journal_id_1_12)s, %(journal_id_1_13)s, %(journal_id_1_14)s)
+2026-06-22 11:34:49,280 INFO sqlalchemy.engine.Engine [generated in 0.00025s] {'journal_id_1_1': 14, 'journal_id_1_2': 13, 'journal_id_1_3': 12, 'journal_id_1_4': 11, 'journal_id_1_5': 10, 'journal_id_1_6': 9, 'journal_id_1_7': 8, 'journal_id_1_8': 7, 'journal_id_1_9': 6, 'journal_id_1_10': 3, 'journal_id_1_11': 15, 'journal_id_1_12': 16, 'journal_id_1_13': 17, 'journal_id_1_14': 18}
+2026-06-22 11:34:49,529 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:49,529 INFO sqlalchemy.engine.Engine [cached since 1.465s ago] {'param_1': 14}
+2026-06-22 11:34:49,772 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:49,772 INFO sqlalchemy.engine.Engine [cached since 1.707s ago] {'param_1': 13}
+2026-06-22 11:34:50,018 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:50,018 INFO sqlalchemy.engine.Engine [cached since 1.953s ago] {'param_1': 12}
+2026-06-22 11:34:50,260 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:50,260 INFO sqlalchemy.engine.Engine [cached since 2.195s ago] {'param_1': 11}
+2026-06-22 11:34:50,508 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:50,508 INFO sqlalchemy.engine.Engine [cached since 2.443s ago] {'param_1': 10}
+2026-06-22 11:34:50,752 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:50,752 INFO sqlalchemy.engine.Engine [cached since 2.687s ago] {'param_1': 9}
+2026-06-22 11:34:50,993 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:50,993 INFO sqlalchemy.engine.Engine [cached since 2.929s ago] {'param_1': 8}
+2026-06-22 11:34:51,235 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:51,235 INFO sqlalchemy.engine.Engine [cached since 3.17s ago] {'param_1': 7}
+2026-06-22 11:34:51,477 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:51,478 INFO sqlalchemy.engine.Engine [cached since 3.413s ago] {'param_1': 6}
+2026-06-22 11:34:51,724 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:51,724 INFO sqlalchemy.engine.Engine [cached since 3.659s ago] {'param_1': 3}
+2026-06-22 11:34:51,966 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:51,966 INFO sqlalchemy.engine.Engine [cached since 3.901s ago] {'param_1': 15}
+2026-06-22 11:34:52,209 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:52,209 INFO sqlalchemy.engine.Engine [cached since 4.144s ago] {'param_1': 16}
+2026-06-22 11:34:52,455 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:52,456 INFO sqlalchemy.engine.Engine [cached since 4.391s ago] {'param_1': 17}
+2026-06-22 11:34:52,697 INFO sqlalchemy.engine.Engine SELECT journal_lines.id AS journal_lines_id, journal_lines.journal_id AS journal_lines_journal_id, journal_lines.account_id AS journal_lines_account_id, journal_lines.memo AS journal_lines_memo, journal_lines.debit AS journal_lines_debit, journal_lines.credit AS journal_lines_credit, journal_lines.created_at AS journal_lines_created_at, journal_lines.updated_at AS journal_lines_updated_at 
+FROM journal_lines 
+WHERE %(param_1)s = journal_lines.journal_id
+2026-06-22 11:34:52,697 INFO sqlalchemy.engine.Engine [cached since 4.632s ago] {'param_1': 18}
+2026-06-22 11:34:52,940 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:34:53,419 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:53,421 INFO sqlalchemy.engine.Engine SELECT ledger_entries.id AS ledger_entries_id, ledger_entries.journal_id AS ledger_entries_journal_id, ledger_entries.account_id AS ledger_entries_account_id, ledger_entries.debit AS ledger_entries_debit, ledger_entries.credit AS ledger_entries_credit, ledger_entries.posting_date AS ledger_entries_posting_date, ledger_entries.created_at AS ledger_entries_created_at, ledger_entries.updated_at AS ledger_entries_updated_at 
+FROM ledger_entries ORDER BY ledger_entries.posting_date DESC
+2026-06-22 11:34:53,421 INFO sqlalchemy.engine.Engine [generated in 0.00020s] {}
+2026-06-22 11:34:53,904 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:34:54,382 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:54,384 INFO sqlalchemy.engine.Engine INSERT INTO budgets (name, fiscal_year, total_amount, status, start_date, end_date, created_at, updated_at) VALUES (%(name)s, %(fiscal_year)s, %(total_amount)s, %(status)s, %(start_date)s, %(end_date)s, %(created_at)s, %(updated_at)s) RETURNING budgets.id
+2026-06-22 11:34:54,384 INFO sqlalchemy.engine.Engine [generated in 0.00017s] {'name': 'Regression Budget', 'fiscal_year': 2026, 'total_amount': Decimal('1000.0'), 'status': 'draft', 'start_date': datetime.datetime(2026, 1, 1, 0, 0), 'end_date': datetime.datetime(2026, 12, 31, 23, 59, 59), 'created_at': datetime.datetime(2026, 6, 22, 6, 4, 54, 383989), 'updated_at': datetime.datetime(2026, 6, 22, 6, 4, 54, 383993)}
+2026-06-22 11:34:54,868 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:34:55,358 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:55,359 INFO sqlalchemy.engine.Engine SELECT budgets.id, budgets.name, budgets.fiscal_year, budgets.total_amount, budgets.status, budgets.start_date, budgets.end_date, budgets.created_at, budgets.updated_at 
+FROM budgets 
+WHERE budgets.id = %(pk_1)s
+2026-06-22 11:34:55,359 INFO sqlalchemy.engine.Engine [generated in 0.00011s] {'pk_1': 4}
+2026-06-22 11:34:55,840 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:34:56,318 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:56,319 INFO sqlalchemy.engine.Engine SELECT budgets.id AS budgets_id, budgets.name AS budgets_name, budgets.fiscal_year AS budgets_fiscal_year, budgets.total_amount AS budgets_total_amount, budgets.status AS budgets_status, budgets.start_date AS budgets_start_date, budgets.end_date AS budgets_end_date, budgets.created_at AS budgets_created_at, budgets.updated_at AS budgets_updated_at 
+FROM budgets
+2026-06-22 11:34:56,319 INFO sqlalchemy.engine.Engine [generated in 0.00016s] {}
+2026-06-22 11:34:56,800 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:34:57,280 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:57,280 INFO sqlalchemy.engine.Engine SELECT budgets.id AS budgets_id, budgets.name AS budgets_name, budgets.fiscal_year AS budgets_fiscal_year, budgets.total_amount AS budgets_total_amount, budgets.status AS budgets_status, budgets.start_date AS budgets_start_date, budgets.end_date AS budgets_end_date, budgets.created_at AS budgets_created_at, budgets.updated_at AS budgets_updated_at 
+FROM budgets 
+WHERE budgets.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-22 11:34:57,280 INFO sqlalchemy.engine.Engine [generated in 0.00009s] {'id_1': 4, 'param_1': 1}
+2026-06-22 11:34:57,765 INFO sqlalchemy.engine.Engine INSERT INTO budget_lines (budget_id, account_id, allocated_amount, spent_amount, consumed_percentage, created_at, updated_at) VALUES (%(budget_id)s, %(account_id)s, %(allocated_amount)s, %(spent_amount)s, %(consumed_percentage)s, %(created_at)s, %(updated_at)s) RETURNING budget_lines.id
+2026-06-22 11:34:57,765 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {'budget_id': 4, 'account_id': 1, 'allocated_amount': Decimal('250.0'), 'spent_amount': Decimal('0'), 'consumed_percentage': Decimal('0'), 'created_at': datetime.datetime(2026, 6, 22, 6, 4, 57, 765635), 'updated_at': datetime.datetime(2026, 6, 22, 6, 4, 57, 765638)}
+2026-06-22 11:34:58,007 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:34:58,484 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:58,485 INFO sqlalchemy.engine.Engine SELECT budget_lines.id, budget_lines.budget_id, budget_lines.account_id, budget_lines.allocated_amount, budget_lines.spent_amount, budget_lines.consumed_percentage, budget_lines.created_at, budget_lines.updated_at 
+FROM budget_lines 
+WHERE budget_lines.id = %(pk_1)s
+2026-06-22 11:34:58,485 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {'pk_1': 3}
+2026-06-22 11:34:58,966 INFO sqlalchemy.engine.Engine SELECT sum(ledger_entries.debit) AS total_spent 
+FROM ledger_entries 
+WHERE ledger_entries.account_id = %(account_id_1)s 
+ LIMIT %(param_1)s
+2026-06-22 11:34:58,966 INFO sqlalchemy.engine.Engine [generated in 0.00019s] {'account_id_1': 1, 'param_1': 1}
+2026-06-22 11:34:59,217 INFO sqlalchemy.engine.Engine UPDATE budget_lines SET spent_amount=%(spent_amount)s, consumed_percentage=%(consumed_percentage)s, updated_at=%(updated_at)s WHERE budget_lines.id = %(budget_lines_id)s
+2026-06-22 11:34:59,217 INFO sqlalchemy.engine.Engine [generated in 0.00022s] {'spent_amount': Decimal('100.00'), 'consumed_percentage': Decimal('40.0'), 'updated_at': datetime.datetime(2026, 6, 22, 6, 4, 59, 217676), 'budget_lines_id': 3}
+2026-06-22 11:34:59,462 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:34:59,942 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:34:59,943 INFO sqlalchemy.engine.Engine SELECT budget_lines.id AS budget_lines_id, budget_lines.budget_id AS budget_lines_budget_id, budget_lines.account_id AS budget_lines_account_id, budget_lines.allocated_amount AS budget_lines_allocated_amount, budget_lines.spent_amount AS budget_lines_spent_amount, budget_lines.consumed_percentage AS budget_lines_consumed_percentage, budget_lines.created_at AS budget_lines_created_at, budget_lines.updated_at AS budget_lines_updated_at 
+FROM budget_lines 
+WHERE budget_lines.id = %(pk_1)s
+2026-06-22 11:34:59,943 INFO sqlalchemy.engine.Engine [generated in 0.00013s] {'pk_1': 3}
+2026-06-22 11:35:00,424 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:00,904 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:00,905 INFO sqlalchemy.engine.Engine SELECT budget_lines.id AS budget_lines_id, budget_lines.budget_id AS budget_lines_budget_id, budget_lines.account_id AS budget_lines_account_id, budget_lines.allocated_amount AS budget_lines_allocated_amount, budget_lines.spent_amount AS budget_lines_spent_amount, budget_lines.consumed_percentage AS budget_lines_consumed_percentage, budget_lines.created_at AS budget_lines_created_at, budget_lines.updated_at AS budget_lines_updated_at 
+FROM budget_lines 
+WHERE budget_lines.budget_id = %(budget_id_1)s
+2026-06-22 11:35:00,905 INFO sqlalchemy.engine.Engine [generated in 0.00009s] {'budget_id_1': 4}
+2026-06-22 11:35:01,387 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:01,870 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:01,870 INFO sqlalchemy.engine.Engine INSERT INTO customers (name, email, phone, address, is_active, created_at, updated_at) VALUES (%(name)s, %(email)s, %(phone)s, %(address)s, %(is_active)s, %(created_at)s, %(updated_at)s) RETURNING customers.id
+2026-06-22 11:35:01,871 INFO sqlalchemy.engine.Engine [generated in 0.00011s] {'name': 'Test Customer', 'email': 'customer@example.com', 'phone': '1234567890', 'address': '123 Test Lane', 'is_active': 'active', 'created_at': datetime.datetime(2026, 6, 22, 6, 5, 1, 870922), 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 1, 870925)}
+2026-06-22 11:35:02,349 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:02,828 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:02,829 INFO sqlalchemy.engine.Engine SELECT customers.id, customers.name, customers.email, customers.phone, customers.address, customers.is_active, customers.created_at, customers.updated_at 
+FROM customers 
+WHERE customers.id = %(pk_1)s
+2026-06-22 11:35:02,829 INFO sqlalchemy.engine.Engine [generated in 0.00013s] {'pk_1': 3}
+2026-06-22 11:35:03,309 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:03,789 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:03,790 INFO sqlalchemy.engine.Engine SELECT customers.id AS customers_id, customers.name AS customers_name, customers.email AS customers_email, customers.phone AS customers_phone, customers.address AS customers_address, customers.is_active AS customers_is_active, customers.created_at AS customers_created_at, customers.updated_at AS customers_updated_at 
+FROM customers
+2026-06-22 11:35:03,790 INFO sqlalchemy.engine.Engine [generated in 0.00012s] {}
+2026-06-22 11:35:04,294 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:04,774 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:04,775 INFO sqlalchemy.engine.Engine INSERT INTO invoices (customer_id, invoice_number, invoice_date, due_date, amount, paid_amount, status, description, journal_id, created_at, updated_at) VALUES (%(customer_id)s, %(invoice_number)s, %(invoice_date)s, %(due_date)s, %(amount)s, %(paid_amount)s, %(status)s, %(description)s, %(journal_id)s, %(created_at)s, %(updated_at)s) RETURNING invoices.id
+2026-06-22 11:35:04,775 INFO sqlalchemy.engine.Engine [generated in 0.00017s] {'customer_id': 3, 'invoice_number': 'INV-001', 'invoice_date': datetime.datetime(2026, 6, 22, 0, 0), 'due_date': datetime.datetime(2026, 7, 22, 0, 0), 'amount': Decimal('150.0'), 'paid_amount': Decimal('0'), 'status': 'draft', 'description': 'Test Invoice', 'journal_id': None, 'created_at': datetime.datetime(2026, 6, 22, 6, 5, 4, 775582), 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 4, 775585)}
+2026-06-22 11:35:05,256 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:05,737 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:05,738 INFO sqlalchemy.engine.Engine SELECT invoices.id, invoices.customer_id, invoices.invoice_number, invoices.invoice_date, invoices.due_date, invoices.amount, invoices.paid_amount, invoices.status, invoices.description, invoices.journal_id, invoices.created_at, invoices.updated_at 
+FROM invoices 
+WHERE invoices.id = %(pk_1)s
+2026-06-22 11:35:05,738 INFO sqlalchemy.engine.Engine [generated in 0.00010s] {'pk_1': 3}
+2026-06-22 11:35:06,218 INFO sqlalchemy.engine.Engine INSERT INTO journal_entries (reference, description, status, date, submitted_at, approved_at, posted_at, created_at, updated_at) VALUES (%(reference)s, %(description)s, %(status)s, %(date)s, %(submitted_at)s, %(approved_at)s, %(posted_at)s, %(created_at)s, %(updated_at)s) RETURNING journal_entries.id
+2026-06-22 11:35:06,219 INFO sqlalchemy.engine.Engine [cached since 19.62s ago] {'reference': 'INV-001', 'description': 'Invoice: Test Invoice', 'status': 'draft', 'date': datetime.datetime(2026, 6, 22, 0, 0, tzinfo=datetime.timezone.utc), 'submitted_at': None, 'approved_at': None, 'posted_at': None, 'created_at': datetime.datetime(2026, 6, 22, 6, 5, 6, 218878), 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 6, 218882)}
+2026-06-22 11:35:06,460 INFO sqlalchemy.engine.Engine INSERT INTO journal_lines (journal_id, account_id, memo, debit, credit, created_at, updated_at) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::NUMERIC(14, 2), p4::NUMERIC(14, 2), p5::TIMESTAMP WITHOUT TIME ZONE, p6::TIMESTAMP WITHOUT TIME ZONE FRO ... 282 characters truncated ...  p4, p5, p6, sen_counter) ORDER BY sen_counter RETURNING journal_lines.id, journal_lines.id AS id__1
+2026-06-22 11:35:06,460 INFO sqlalchemy.engine.Engine [cached since 19.62s ago (insertmanyvalues) 1/1 (ordered)] {'debit__0': Decimal('150.00'), 'journal_id__0': 19, 'memo__0': 'Invoice INV-001', 'created_at__0': datetime.datetime(2026, 6, 22, 6, 5, 6, 460431), 'account_id__0': 3, 'updated_at__0': datetime.datetime(2026, 6, 22, 6, 5, 6, 460435), 'credit__0': Decimal('0'), 'debit__1': Decimal('0'), 'journal_id__1': 19, 'memo__1': 'Revenue from invoice INV-001', 'created_at__1': datetime.datetime(2026, 6, 22, 6, 5, 6, 460437), 'account_id__1': 6, 'updated_at__1': datetime.datetime(2026, 6, 22, 6, 5, 6, 460438), 'credit__1': Decimal('150.00')}
+2026-06-22 11:35:06,705 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:07,186 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:07,186 INFO sqlalchemy.engine.Engine SELECT journal_entries.id, journal_entries.reference, journal_entries.description, journal_entries.status, journal_entries.date, journal_entries.submitted_at, journal_entries.approved_at, journal_entries.posted_at, journal_entries.created_at, journal_entries.updated_at 
+FROM journal_entries 
+WHERE journal_entries.id = %(pk_1)s
+2026-06-22 11:35:07,186 INFO sqlalchemy.engine.Engine [cached since 19.61s ago] {'pk_1': 19}
+2026-06-22 11:35:07,666 INFO sqlalchemy.engine.Engine SELECT invoices.id AS invoices_id, invoices.customer_id AS invoices_customer_id, invoices.invoice_number AS invoices_invoice_number, invoices.invoice_date AS invoices_invoice_date, invoices.due_date AS invoices_due_date, invoices.amount AS invoices_amount, invoices.paid_amount AS invoices_paid_amount, invoices.status AS invoices_status, invoices.description AS invoices_description, invoices.journal_id AS invoices_journal_id, invoices.created_at AS invoices_created_at, invoices.updated_at AS invoices_updated_at 
+FROM invoices 
+WHERE invoices.id = %(pk_1)s
+2026-06-22 11:35:07,667 INFO sqlalchemy.engine.Engine [generated in 0.00028s] {'pk_1': 3}
+2026-06-22 11:35:07,912 INFO sqlalchemy.engine.Engine UPDATE invoices SET journal_id=%(journal_id)s, updated_at=%(updated_at)s WHERE invoices.id = %(invoices_id)s
+2026-06-22 11:35:07,912 INFO sqlalchemy.engine.Engine [generated in 0.00018s] {'journal_id': 19, 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 7, 912703), 'invoices_id': 3}
+2026-06-22 11:35:08,153 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:08,633 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:08,633 INFO sqlalchemy.engine.Engine SELECT invoices.id, invoices.customer_id, invoices.invoice_number, invoices.invoice_date, invoices.due_date, invoices.amount, invoices.paid_amount, invoices.status, invoices.description, invoices.journal_id, invoices.created_at, invoices.updated_at 
+FROM invoices 
+WHERE invoices.id = %(pk_1)s
+2026-06-22 11:35:08,633 INFO sqlalchemy.engine.Engine [cached since 2.896s ago] {'pk_1': 3}
+2026-06-22 11:35:09,114 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:09,594 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:09,594 INFO sqlalchemy.engine.Engine SELECT invoices.id AS invoices_id, invoices.customer_id AS invoices_customer_id, invoices.invoice_number AS invoices_invoice_number, invoices.invoice_date AS invoices_invoice_date, invoices.due_date AS invoices_due_date, invoices.amount AS invoices_amount, invoices.paid_amount AS invoices_paid_amount, invoices.status AS invoices_status, invoices.description AS invoices_description, invoices.journal_id AS invoices_journal_id, invoices.created_at AS invoices_created_at, invoices.updated_at AS invoices_updated_at 
+FROM invoices
+2026-06-22 11:35:09,595 INFO sqlalchemy.engine.Engine [generated in 0.00009s] {}
+2026-06-22 11:35:10,076 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:10,559 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:10,560 INFO sqlalchemy.engine.Engine INSERT INTO vendors (name, email, phone, address, is_active, created_at, updated_at) VALUES (%(name)s, %(email)s, %(phone)s, %(address)s, %(is_active)s, %(created_at)s, %(updated_at)s) RETURNING vendors.id
+2026-06-22 11:35:10,560 INFO sqlalchemy.engine.Engine [generated in 0.00016s] {'name': 'Test Vendor', 'email': 'vendor@example.com', 'phone': '0987654321', 'address': '456 Vendor Road', 'is_active': 'active', 'created_at': datetime.datetime(2026, 6, 22, 6, 5, 10, 560489), 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 10, 560493)}
+2026-06-22 11:35:11,039 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:11,518 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:11,519 INFO sqlalchemy.engine.Engine SELECT vendors.id, vendors.name, vendors.email, vendors.phone, vendors.address, vendors.is_active, vendors.created_at, vendors.updated_at 
+FROM vendors 
+WHERE vendors.id = %(pk_1)s
+2026-06-22 11:35:11,519 INFO sqlalchemy.engine.Engine [generated in 0.00017s] {'pk_1': 3}
+2026-06-22 11:35:12,003 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:12,484 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:12,484 INFO sqlalchemy.engine.Engine SELECT vendors.id AS vendors_id, vendors.name AS vendors_name, vendors.email AS vendors_email, vendors.phone AS vendors_phone, vendors.address AS vendors_address, vendors.is_active AS vendors_is_active, vendors.created_at AS vendors_created_at, vendors.updated_at AS vendors_updated_at 
+FROM vendors
+2026-06-22 11:35:12,484 INFO sqlalchemy.engine.Engine [generated in 0.00012s] {}
+2026-06-22 11:35:12,966 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:13,448 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:13,449 INFO sqlalchemy.engine.Engine INSERT INTO bills (vendor_id, bill_number, bill_date, due_date, amount, paid_amount, status, description, journal_id, created_at, updated_at) VALUES (%(vendor_id)s, %(bill_number)s, %(bill_date)s, %(due_date)s, %(amount)s, %(paid_amount)s, %(status)s, %(description)s, %(journal_id)s, %(created_at)s, %(updated_at)s) RETURNING bills.id
+2026-06-22 11:35:13,449 INFO sqlalchemy.engine.Engine [generated in 0.00017s] {'vendor_id': 3, 'bill_number': 'BILL-001', 'bill_date': datetime.datetime(2026, 6, 22, 0, 0), 'due_date': datetime.datetime(2026, 7, 22, 0, 0), 'amount': Decimal('120.0'), 'paid_amount': Decimal('0'), 'status': 'draft', 'description': 'Test Bill', 'journal_id': None, 'created_at': datetime.datetime(2026, 6, 22, 6, 5, 13, 449390), 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 13, 449393)}
+2026-06-22 11:35:13,929 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:14,411 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:14,412 INFO sqlalchemy.engine.Engine SELECT bills.id, bills.vendor_id, bills.bill_number, bills.bill_date, bills.due_date, bills.amount, bills.paid_amount, bills.status, bills.description, bills.journal_id, bills.created_at, bills.updated_at 
+FROM bills 
+WHERE bills.id = %(pk_1)s
+2026-06-22 11:35:14,413 INFO sqlalchemy.engine.Engine [generated in 0.00011s] {'pk_1': 3}
+2026-06-22 11:35:14,895 INFO sqlalchemy.engine.Engine INSERT INTO journal_entries (reference, description, status, date, submitted_at, approved_at, posted_at, created_at, updated_at) VALUES (%(reference)s, %(description)s, %(status)s, %(date)s, %(submitted_at)s, %(approved_at)s, %(posted_at)s, %(created_at)s, %(updated_at)s) RETURNING journal_entries.id
+2026-06-22 11:35:14,895 INFO sqlalchemy.engine.Engine [cached since 28.3s ago] {'reference': 'BILL-001', 'description': 'Bill: Test Bill', 'status': 'draft', 'date': datetime.datetime(2026, 6, 22, 0, 0, tzinfo=datetime.timezone.utc), 'submitted_at': None, 'approved_at': None, 'posted_at': None, 'created_at': datetime.datetime(2026, 6, 22, 6, 5, 14, 895766), 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 14, 895771)}
+2026-06-22 11:35:15,138 INFO sqlalchemy.engine.Engine INSERT INTO journal_lines (journal_id, account_id, memo, debit, credit, created_at, updated_at) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::NUMERIC(14, 2), p4::NUMERIC(14, 2), p5::TIMESTAMP WITHOUT TIME ZONE, p6::TIMESTAMP WITHOUT TIME ZONE FRO ... 282 characters truncated ...  p4, p5, p6, sen_counter) ORDER BY sen_counter RETURNING journal_lines.id, journal_lines.id AS id__1
+2026-06-22 11:35:15,138 INFO sqlalchemy.engine.Engine [cached since 28.3s ago (insertmanyvalues) 1/1 (ordered)] {'debit__0': Decimal('120.00'), 'journal_id__0': 20, 'memo__0': 'Bill BILL-001', 'created_at__0': datetime.datetime(2026, 6, 22, 6, 5, 15, 138192), 'account_id__0': 7, 'updated_at__0': datetime.datetime(2026, 6, 22, 6, 5, 15, 138198), 'credit__0': Decimal('0'), 'debit__1': Decimal('0'), 'journal_id__1': 20, 'memo__1': 'Payable for Bill BILL-001', 'created_at__1': datetime.datetime(2026, 6, 22, 6, 5, 15, 138200), 'account_id__1': 4, 'updated_at__1': datetime.datetime(2026, 6, 22, 6, 5, 15, 138202), 'credit__1': Decimal('120.00')}
+2026-06-22 11:35:15,381 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:15,860 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:15,861 INFO sqlalchemy.engine.Engine SELECT journal_entries.id, journal_entries.reference, journal_entries.description, journal_entries.status, journal_entries.date, journal_entries.submitted_at, journal_entries.approved_at, journal_entries.posted_at, journal_entries.created_at, journal_entries.updated_at 
+FROM journal_entries 
+WHERE journal_entries.id = %(pk_1)s
+2026-06-22 11:35:15,861 INFO sqlalchemy.engine.Engine [cached since 28.29s ago] {'pk_1': 20}
+2026-06-22 11:35:16,341 INFO sqlalchemy.engine.Engine SELECT bills.id AS bills_id, bills.vendor_id AS bills_vendor_id, bills.bill_number AS bills_bill_number, bills.bill_date AS bills_bill_date, bills.due_date AS bills_due_date, bills.amount AS bills_amount, bills.paid_amount AS bills_paid_amount, bills.status AS bills_status, bills.description AS bills_description, bills.journal_id AS bills_journal_id, bills.created_at AS bills_created_at, bills.updated_at AS bills_updated_at 
+FROM bills 
+WHERE bills.id = %(pk_1)s
+2026-06-22 11:35:16,341 INFO sqlalchemy.engine.Engine [generated in 0.00019s] {'pk_1': 3}
+2026-06-22 11:35:16,584 INFO sqlalchemy.engine.Engine UPDATE bills SET journal_id=%(journal_id)s, updated_at=%(updated_at)s WHERE bills.id = %(bills_id)s
+2026-06-22 11:35:16,585 INFO sqlalchemy.engine.Engine [generated in 0.00019s] {'journal_id': 20, 'updated_at': datetime.datetime(2026, 6, 22, 6, 5, 16, 584919), 'bills_id': 3}
+2026-06-22 11:35:16,828 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-22 11:35:17,308 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:17,308 INFO sqlalchemy.engine.Engine SELECT bills.id, bills.vendor_id, bills.bill_number, bills.bill_date, bills.due_date, bills.amount, bills.paid_amount, bills.status, bills.description, bills.journal_id, bills.created_at, bills.updated_at 
+FROM bills 
+WHERE bills.id = %(pk_1)s
+2026-06-22 11:35:17,308 INFO sqlalchemy.engine.Engine [cached since 2.896s ago] {'pk_1': 3}
+2026-06-22 11:35:17,789 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:18,271 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:18,272 INFO sqlalchemy.engine.Engine SELECT bills.id AS bills_id, bills.vendor_id AS bills_vendor_id, bills.bill_number AS bills_bill_number, bills.bill_date AS bills_bill_date, bills.due_date AS bills_due_date, bills.amount AS bills_amount, bills.paid_amount AS bills_paid_amount, bills.status AS bills_status, bills.description AS bills_description, bills.journal_id AS bills_journal_id, bills.created_at AS bills_created_at, bills.updated_at AS bills_updated_at 
+FROM bills
+2026-06-22 11:35:18,272 INFO sqlalchemy.engine.Engine [generated in 0.00013s] {}
+2026-06-22 11:35:18,752 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:19,233 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:19,234 INFO sqlalchemy.engine.Engine SELECT ledger_entries.account_id AS ledger_entries_account_id, chart_of_accounts.account_code AS chart_of_accounts_account_code, chart_of_accounts.account_name AS chart_of_accounts_account_name, chart_of_accounts.account_type AS chart_of_accounts_account_type, sum(ledger_entries.debit) AS total_debit, sum(ledger_entries.credit) AS total_credit 
+FROM ledger_entries JOIN chart_of_accounts ON chart_of_accounts.id = ledger_entries.account_id GROUP BY ledger_entries.account_id, chart_of_accounts.account_code, chart_of_accounts.account_name, chart_of_accounts.account_type, ledger_entries.account_id, chart_of_accounts.account_code, chart_of_accounts.account_name, chart_of_accounts.account_type
+2026-06-22 11:35:19,234 INFO sqlalchemy.engine.Engine [generated in 0.00014s] {}
+2026-06-22 11:35:19,718 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:20,199 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:20,200 INFO sqlalchemy.engine.Engine SELECT sum(ledger_entries.credit) AS total_revenue 
+FROM ledger_entries JOIN chart_of_accounts ON chart_of_accounts.id = ledger_entries.account_id 
+WHERE chart_of_accounts.account_type = %(account_type_1)s 
+ LIMIT %(param_1)s
+2026-06-22 11:35:20,200 INFO sqlalchemy.engine.Engine [generated in 0.00013s] {'account_type_1': 'Revenue', 'param_1': 1}
+2026-06-22 11:35:20,682 INFO sqlalchemy.engine.Engine SELECT sum(ledger_entries.debit) AS total_expense 
+FROM ledger_entries JOIN chart_of_accounts ON chart_of_accounts.id = ledger_entries.account_id 
+WHERE chart_of_accounts.account_type = %(account_type_1)s 
+ LIMIT %(param_1)s
+2026-06-22 11:35:20,682 INFO sqlalchemy.engine.Engine [generated in 0.00041s] {'account_type_1': 'Expense', 'param_1': 1}
+2026-06-22 11:35:20,930 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-22 11:35:21,408 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-22 11:35:21,409 INFO sqlalchemy.engine.Engine SELECT sum(ledger_entries.debit) AS total_assets 
+FROM ledger_entries JOIN chart_of_accounts ON chart_of_accounts.id = ledger_entries.account_id 
+WHERE chart_of_accounts.account_type = %(account_type_1)s 
+ LIMIT %(param_1)s
+2026-06-22 11:35:21,409 INFO sqlalchemy.engine.Engine [generated in 0.00019s] {'account_type_1': 'Asset', 'param_1': 1}
+2026-06-22 11:35:21,892 INFO sqlalchemy.engine.Engine SELECT sum(ledger_entries.credit) AS total_liabilities 
+FROM ledger_entries JOIN chart_of_accounts ON chart_of_accounts.id = ledger_entries.account_id 
+WHERE chart_of_accounts.account_type = %(account_type_1)s 
+ LIMIT %(param_1)s
+2026-06-22 11:35:21,892 INFO sqlalchemy.engine.Engine [generated in 0.00017s] {'account_type_1': 'Liability', 'param_1': 1}
+2026-06-22 11:35:22,139 INFO sqlalchemy.engine.Engine SELECT sum(ledger_entries.credit) AS total_equity 
+FROM ledger_entries JOIN chart_of_accounts ON chart_of_accounts.id = ledger_entries.account_id 
+WHERE chart_of_accounts.account_type = %(account_type_1)s 
+ LIMIT %(param_1)s
+2026-06-22 11:35:22,139 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {'account_type_1': 'Equity', 'param_1': 1}
+2026-06-22 11:35:22,382 INFO sqlalchemy.engine.Engine ROLLBACK
+[
+  {
+    "method": "POST",
+    "path": "/api/accounts/coa",
+    "status": null,
+    "body": "(psycopg2.errors.NoActiveSqlTransaction) current transaction is aborted, commands ignored until end of transaction block\n\n[SQL: INSERT INTO chart_of_accounts (account_code, account_name, account_type, parent_account_id, is_active, created_at, updated_at) VALUES (%(account_code)s, %(account_name)s, %(account_type)s, %(parent_account_id)s, %(is_active)s, %(created_at)s, %(updated_at)s) RETURNING chart_of_accounts.id]\n[parameters: {'account_code': '1000', 'account_name': 'Cash', 'account_type': 'asset', 'parent_account_id': None, 'is_active': True, 'created_at': datetime.datetime(2026, 6, 22, 6, 4, 43, 807191), 'updated_at': datetime.datetime(2026, 6, 22, 6, 4, 43, 807195)}]\n(Background on this error at: https://sqlalche.me/e/20/2j85)"
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/coa",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "account_code": "1000",
+        "account_name": "Cash - Test",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T03:11:51.121507",
+        "updated_at": "2026-06-22T03:11:51.121512"
+      },
+      {
+        "id": 2,
+        "account_code": "1000",
+        "account_name": "Cash - Test",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T03:33:41.959756",
+        "updated_at": "2026-06-22T03:33:41.959764"
+      },
+      {
+        "id": 4,
+        "account_code": "1001",
+        "account_name": "Req Account 1",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:06:16.155564",
+        "updated_at": "2026-06-22T05:06:16.155570"
+      },
+      {
+        "id": 10,
+        "account_code": "1002",
+        "account_name": "Req Account 2",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:07:47.694383",
+        "updated_at": "2026-06-22T05:07:47.694388"
+      },
+      {
+        "id": 5,
+        "account_code": "1003",
+        "account_name": "Req Account 3",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:06:20.869893",
+        "updated_at": "2026-06-22T05:06:20.869897"
+      },
+      {
+        "id": 6,
+        "account_code": "1004",
+        "account_name": "Req Account 4",
+        "account_type": "liability",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:06:22.711604",
+        "updated_at": "2026-06-22T05:06:22.711609"
+      },
+      {
+        "id": 7,
+        "account_code": "1005",
+        "account_name": "Req Account 5",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:06:24.536005",
+        "updated_at": "2026-06-22T05:06:24.536009"
+      },
+      {
+        "id": 8,
+        "account_code": "1006",
+        "account_name": "Req Account 6",
+        "account_type": "revenue",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:06:26.371157",
+        "updated_at": "2026-06-22T05:06:26.371164"
+      },
+      {
+        "id": 9,
+        "account_code": "1007",
+        "account_name": "Req Account 7",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:06:28.215523",
+        "updated_at": "2026-06-22T05:06:28.215527"
+      },
+      {
+        "id": 3,
+        "account_code": "123456789",
+        "account_name": "idukki fund",
+        "account_type": "Expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T04:46:24.455930",
+        "updated_at": "2026-06-22T04:46:24.455934"
+      },
+      {
+        "id": 11,
+        "account_code": "RCOA-1782085328-0",
+        "account_name": "RCOA Test 0",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:09.241868",
+        "updated_at": "2026-06-22T05:12:09.241874"
+      },
+      {
+        "id": 12,
+        "account_code": "RCOA-1782085330-1",
+        "account_name": "RCOA Test 1",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:11.097244",
+        "updated_at": "2026-06-22T05:12:11.097249"
+      },
+      {
+        "id": 13,
+        "account_code": "RCOA-1782085332-2",
+        "account_name": "RCOA Test 2",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:12.977967",
+        "updated_at": "2026-06-22T05:12:12.977971"
+      },
+      {
+        "id": 14,
+        "account_code": "RCOA-1782085334-3",
+        "account_name": "RCOA Test 3",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:14.784547",
+        "updated_at": "2026-06-22T05:12:14.784552"
+      },
+      {
+        "id": 15,
+        "account_code": "RCOA-1782085336-4",
+        "account_name": "RCOA Test 4",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:16.596188",
+        "updated_at": "2026-06-22T05:12:16.596193"
+      },
+      {
+        "id": 16,
+        "account_code": "RCOA-1782085338-5",
+        "account_name": "RCOA Test 5",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:18.451527",
+        "updated_at": "2026-06-22T05:12:18.451532"
+      },
+      {
+        "id": 17,
+        "account_code": "RCOA-1782085339-6",
+        "account_name": "RCOA Test 6",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:20.255069",
+        "updated_at": "2026-06-22T05:12:20.255073"
+      },
+      {
+        "id": 18,
+        "account_code": "RCOA-1782085341-7",
+        "account_name": "RCOA Test 7",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:22.104268",
+        "updated_at": "2026-06-22T05:12:22.104272"
+      },
+      {
+        "id": 19,
+        "account_code": "RCOA-1782085343-8",
+        "account_name": "RCOA Test 8",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:23.954544",
+        "updated_at": "2026-06-22T05:12:23.954548"
+      },
+      {
+        "id": 20,
+        "account_code": "RCOA-1782085345-9",
+        "account_name": "RCOA Test 9",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:25.800225",
+        "updated_at": "2026-06-22T05:12:25.800229"
+      },
+      {
+        "id": 21,
+        "account_code": "RCOA-1782085347-10",
+        "account_name": "RCOA Test 10",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:27.701521",
+        "updated_at": "2026-06-22T05:12:27.701525"
+      },
+      {
+        "id": 22,
+        "account_code": "RCOA-1782085349-11",
+        "account_name": "RCOA Test 11",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:29.555104",
+        "updated_at": "2026-06-22T05:12:29.555108"
+      },
+      {
+        "id": 23,
+        "account_code": "RCOA-1782085351-12",
+        "account_name": "RCOA Test 12",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:31.376762",
+        "updated_at": "2026-06-22T05:12:31.376767"
+      },
+      {
+        "id": 24,
+        "account_code": "RCOA-1782085352-13",
+        "account_name": "RCOA Test 13",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:33.215162",
+        "updated_at": "2026-06-22T05:12:33.215166"
+      },
+      {
+        "id": 25,
+        "account_code": "RCOA-1782085354-14",
+        "account_name": "RCOA Test 14",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:35.043323",
+        "updated_at": "2026-06-22T05:12:35.043327"
+      },
+      {
+        "id": 26,
+        "account_code": "RCOA-1782085357-15",
+        "account_name": "RCOA Test 15",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:38.396771",
+        "updated_at": "2026-06-22T05:12:38.396775"
+      },
+      {
+        "id": 27,
+        "account_code": "RCOA-1782085359-16",
+        "account_name": "RCOA Test 16",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:40.257191",
+        "updated_at": "2026-06-22T05:12:40.257195"
+      },
+      {
+        "id": 28,
+        "account_code": "RCOA-1782085361-17",
+        "account_name": "RCOA Test 17",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:42.131202",
+        "updated_at": "2026-06-22T05:12:42.131206"
+      },
+      {
+        "id": 29,
+        "account_code": "RCOA-1782085363-18",
+        "account_name": "RCOA Test 18",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:44.015505",
+        "updated_at": "2026-06-22T05:12:44.015511"
+      },
+      {
+        "id": 30,
+        "account_code": "RCOA-1782085365-19",
+        "account_name": "RCOA Test 19",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:45.869181",
+        "updated_at": "2026-06-22T05:12:45.869184"
+      },
+      {
+        "id": 31,
+        "account_code": "RCOA-1782085367-20",
+        "account_name": "RCOA Test 20",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:47.700268",
+        "updated_at": "2026-06-22T05:12:47.700274"
+      },
+      {
+        "id": 32,
+        "account_code": "RCOA-1782085369-21",
+        "account_name": "RCOA Test 21",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:49.555095",
+        "updated_at": "2026-06-22T05:12:49.555100"
+      },
+      {
+        "id": 33,
+        "account_code": "RCOA-1782085371-22",
+        "account_name": "RCOA Test 22",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:51.422844",
+        "updated_at": "2026-06-22T05:12:51.422849"
+      },
+      {
+        "id": 34,
+        "account_code": "RCOA-1782085373-23",
+        "account_name": "RCOA Test 23",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:53.293387",
+        "updated_at": "2026-06-22T05:12:53.293390"
+      },
+      {
+        "id": 35,
+        "account_code": "RCOA-1782085374-24",
+        "account_name": "RCOA Test 24",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:55.136640",
+        "updated_at": "2026-06-22T05:12:55.136645"
+      },
+      {
+        "id": 36,
+        "account_code": "RCOA-1782085376-25",
+        "account_name": "RCOA Test 25",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:56.982929",
+        "updated_at": "2026-06-22T05:12:56.982934"
+      },
+      {
+        "id": 37,
+        "account_code": "RCOA-1782085378-26",
+        "account_name": "RCOA Test 26",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:12:58.823356",
+        "updated_at": "2026-06-22T05:12:58.823360"
+      },
+      {
+        "id": 38,
+        "account_code": "RCOA-1782085380-27",
+        "account_name": "RCOA Test 27",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:00.673480",
+        "updated_at": "2026-06-22T05:13:00.673484"
+      },
+      {
+        "id": 39,
+        "account_code": "RCOA-1782085382-28",
+        "account_name": "RCOA Test 28",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:02.512206",
+        "updated_at": "2026-06-22T05:13:02.512210"
+      },
+      {
+        "id": 40,
+        "account_code": "RCOA-1782085384-29",
+        "account_name": "RCOA Test 29",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:04.371184",
+        "updated_at": "2026-06-22T05:13:04.371188"
+      },
+      {
+        "id": 41,
+        "account_code": "RCOA-1782085385-30",
+        "account_name": "RCOA Test 30",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:06.204426",
+        "updated_at": "2026-06-22T05:13:06.204429"
+      },
+      {
+        "id": 42,
+        "account_code": "RCOA-1782085387-31",
+        "account_name": "RCOA Test 31",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:08.036171",
+        "updated_at": "2026-06-22T05:13:08.036175"
+      },
+      {
+        "id": 43,
+        "account_code": "RCOA-1782085389-32",
+        "account_name": "RCOA Test 32",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:09.890641",
+        "updated_at": "2026-06-22T05:13:09.890647"
+      },
+      {
+        "id": 44,
+        "account_code": "RCOA-1782085391-33",
+        "account_name": "RCOA Test 33",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:11.745133",
+        "updated_at": "2026-06-22T05:13:11.745139"
+      },
+      {
+        "id": 45,
+        "account_code": "RCOA-1782085393-34",
+        "account_name": "RCOA Test 34",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:13.615088",
+        "updated_at": "2026-06-22T05:13:13.615092"
+      },
+      {
+        "id": 46,
+        "account_code": "RCOA-1782085395-35",
+        "account_name": "RCOA Test 35",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:15.462726",
+        "updated_at": "2026-06-22T05:13:15.462730"
+      },
+      {
+        "id": 47,
+        "account_code": "RCOA-1782085397-36",
+        "account_name": "RCOA Test 36",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:17.316795",
+        "updated_at": "2026-06-22T05:13:17.316799"
+      },
+      {
+        "id": 48,
+        "account_code": "RCOA-1782085398-37",
+        "account_name": "RCOA Test 37",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:19.156383",
+        "updated_at": "2026-06-22T05:13:19.156387"
+      },
+      {
+        "id": 49,
+        "account_code": "RCOA-1782085400-38",
+        "account_name": "RCOA Test 38",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:21.016462",
+        "updated_at": "2026-06-22T05:13:21.016466"
+      },
+      {
+        "id": 50,
+        "account_code": "RCOA-1782085402-39",
+        "account_name": "RCOA Test 39",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:22.858216",
+        "updated_at": "2026-06-22T05:13:22.858220"
+      },
+      {
+        "id": 51,
+        "account_code": "RCOA-1782085404-40",
+        "account_name": "RCOA Test 40",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:24.734074",
+        "updated_at": "2026-06-22T05:13:24.734077"
+      },
+      {
+        "id": 52,
+        "account_code": "RCOA-1782085406-41",
+        "account_name": "RCOA Test 41",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:26.571299",
+        "updated_at": "2026-06-22T05:13:26.571303"
+      },
+      {
+        "id": 53,
+        "account_code": "RCOA-1782085408-42",
+        "account_name": "RCOA Test 42",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:28.399198",
+        "updated_at": "2026-06-22T05:13:28.399202"
+      },
+      {
+        "id": 54,
+        "account_code": "RCOA-1782085410-43",
+        "account_name": "RCOA Test 43",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:30.265461",
+        "updated_at": "2026-06-22T05:13:30.265466"
+      },
+      {
+        "id": 55,
+        "account_code": "RCOA-1782085411-44",
+        "account_name": "RCOA Test 44",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:32.140885",
+        "updated_at": "2026-06-22T05:13:32.140891"
+      },
+      {
+        "id": 56,
+        "account_code": "RCOA-1782085413-45",
+        "account_name": "RCOA Test 45",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:34.006423",
+        "updated_at": "2026-06-22T05:13:34.006427"
+      },
+      {
+        "id": 57,
+        "account_code": "RCOA-1782085415-46",
+        "account_name": "RCOA Test 46",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:35.862020",
+        "updated_at": "2026-06-22T05:13:35.862031"
+      },
+      {
+        "id": 58,
+        "account_code": "RCOA-1782085417-47",
+        "account_name": "RCOA Test 47",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:37.692699",
+        "updated_at": "2026-06-22T05:13:37.692703"
+      },
+      {
+        "id": 59,
+        "account_code": "RCOA-1782085419-48",
+        "account_name": "RCOA Test 48",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:39.529120",
+        "updated_at": "2026-06-22T05:13:39.529125"
+      },
+      {
+        "id": 60,
+        "account_code": "RCOA-1782085421-49",
+        "account_name": "RCOA Test 49",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:41.387939",
+        "updated_at": "2026-06-22T05:13:41.387943"
+      },
+      {
+        "id": 61,
+        "account_code": "RCOA-1782085422-50",
+        "account_name": "RCOA Test 50",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:43.246065",
+        "updated_at": "2026-06-22T05:13:43.246068"
+      },
+      {
+        "id": 62,
+        "account_code": "RCOA-1782085424-51",
+        "account_name": "RCOA Test 51",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:45.107023",
+        "updated_at": "2026-06-22T05:13:45.107028"
+      },
+      {
+        "id": 63,
+        "account_code": "RCOA-1782085426-52",
+        "account_name": "RCOA Test 52",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:46.950323",
+        "updated_at": "2026-06-22T05:13:46.950327"
+      },
+      {
+        "id": 64,
+        "account_code": "RCOA-1782085428-53",
+        "account_name": "RCOA Test 53",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:48.829592",
+        "updated_at": "2026-06-22T05:13:48.829596"
+      },
+      {
+        "id": 65,
+        "account_code": "RCOA-1782085430-54",
+        "account_name": "RCOA Test 54",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:50.661401",
+        "updated_at": "2026-06-22T05:13:50.661407"
+      },
+      {
+        "id": 66,
+        "account_code": "RCOA-1782085432-55",
+        "account_name": "RCOA Test 55",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:52.510313",
+        "updated_at": "2026-06-22T05:13:52.510317"
+      },
+      {
+        "id": 67,
+        "account_code": "RCOA-1782085434-56",
+        "account_name": "RCOA Test 56",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:54.350487",
+        "updated_at": "2026-06-22T05:13:54.350491"
+      },
+      {
+        "id": 68,
+        "account_code": "RCOA-1782085435-57",
+        "account_name": "RCOA Test 57",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:56.181784",
+        "updated_at": "2026-06-22T05:13:56.181789"
+      },
+      {
+        "id": 69,
+        "account_code": "RCOA-1782085437-58",
+        "account_name": "RCOA Test 58",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:58.035089",
+        "updated_at": "2026-06-22T05:13:58.035093"
+      },
+      {
+        "id": 70,
+        "account_code": "RCOA-1782085439-59",
+        "account_name": "RCOA Test 59",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:13:59.869010",
+        "updated_at": "2026-06-22T05:13:59.869017"
+      },
+      {
+        "id": 71,
+        "account_code": "RCOA-1782085441-60",
+        "account_name": "RCOA Test 60",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:01.715308",
+        "updated_at": "2026-06-22T05:14:01.715315"
+      },
+      {
+        "id": 72,
+        "account_code": "RCOA-1782085443-61",
+        "account_name": "RCOA Test 61",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:03.564331",
+        "updated_at": "2026-06-22T05:14:03.564335"
+      },
+      {
+        "id": 73,
+        "account_code": "RCOA-1782085445-62",
+        "account_name": "RCOA Test 62",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:05.399259",
+        "updated_at": "2026-06-22T05:14:05.399263"
+      },
+      {
+        "id": 74,
+        "account_code": "RCOA-1782085446-63",
+        "account_name": "RCOA Test 63",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:07.223637",
+        "updated_at": "2026-06-22T05:14:07.223643"
+      },
+      {
+        "id": 75,
+        "account_code": "RCOA-1782085448-64",
+        "account_name": "RCOA Test 64",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:09.049690",
+        "updated_at": "2026-06-22T05:14:09.049694"
+      },
+      {
+        "id": 76,
+        "account_code": "RCOA-1782085450-65",
+        "account_name": "RCOA Test 65",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:10.877131",
+        "updated_at": "2026-06-22T05:14:10.877136"
+      },
+      {
+        "id": 77,
+        "account_code": "RCOA-1782085452-66",
+        "account_name": "RCOA Test 66",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:12.701262",
+        "updated_at": "2026-06-22T05:14:12.701268"
+      },
+      {
+        "id": 78,
+        "account_code": "RCOA-1782085454-67",
+        "account_name": "RCOA Test 67",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:14.527266",
+        "updated_at": "2026-06-22T05:14:14.527273"
+      },
+      {
+        "id": 79,
+        "account_code": "RCOA-1782085456-68",
+        "account_name": "RCOA Test 68",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:16.392652",
+        "updated_at": "2026-06-22T05:14:16.392656"
+      },
+      {
+        "id": 80,
+        "account_code": "RCOA-1782085457-69",
+        "account_name": "RCOA Test 69",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:18.220642",
+        "updated_at": "2026-06-22T05:14:18.220646"
+      },
+      {
+        "id": 81,
+        "account_code": "RCOA-1782085459-70",
+        "account_name": "RCOA Test 70",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:20.056136",
+        "updated_at": "2026-06-22T05:14:20.056143"
+      },
+      {
+        "id": 82,
+        "account_code": "RCOA-1782085461-71",
+        "account_name": "RCOA Test 71",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:21.880068",
+        "updated_at": "2026-06-22T05:14:21.880072"
+      },
+      {
+        "id": 83,
+        "account_code": "RCOA-1782085463-72",
+        "account_name": "RCOA Test 72",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:23.714807",
+        "updated_at": "2026-06-22T05:14:23.714811"
+      },
+      {
+        "id": 84,
+        "account_code": "RCOA-1782085465-73",
+        "account_name": "RCOA Test 73",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:25.585618",
+        "updated_at": "2026-06-22T05:14:25.585621"
+      },
+      {
+        "id": 85,
+        "account_code": "RCOA-1782085467-74",
+        "account_name": "RCOA Test 74",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:27.461439",
+        "updated_at": "2026-06-22T05:14:27.461445"
+      },
+      {
+        "id": 86,
+        "account_code": "RCOA-1782085469-75",
+        "account_name": "RCOA Test 75",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:29.309147",
+        "updated_at": "2026-06-22T05:14:29.309151"
+      },
+      {
+        "id": 87,
+        "account_code": "RCOA-1782085470-76",
+        "account_name": "RCOA Test 76",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:31.151043",
+        "updated_at": "2026-06-22T05:14:31.151047"
+      },
+      {
+        "id": 88,
+        "account_code": "RCOA-1782085472-77",
+        "account_name": "RCOA Test 77",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:33.004905",
+        "updated_at": "2026-06-22T05:14:33.004910"
+      },
+      {
+        "id": 89,
+        "account_code": "RCOA-1782085474-78",
+        "account_name": "RCOA Test 78",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:34.852839",
+        "updated_at": "2026-06-22T05:14:34.852845"
+      },
+      {
+        "id": 90,
+        "account_code": "RCOA-1782085476-79",
+        "account_name": "RCOA Test 79",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:36.676952",
+        "updated_at": "2026-06-22T05:14:36.676956"
+      },
+      {
+        "id": 91,
+        "account_code": "RCOA-1782085478-80",
+        "account_name": "RCOA Test 80",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:38.513535",
+        "updated_at": "2026-06-22T05:14:38.513540"
+      },
+      {
+        "id": 92,
+        "account_code": "RCOA-1782085480-81",
+        "account_name": "RCOA Test 81",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:40.363976",
+        "updated_at": "2026-06-22T05:14:40.363982"
+      },
+      {
+        "id": 93,
+        "account_code": "RCOA-1782085481-82",
+        "account_name": "RCOA Test 82",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:42.187052",
+        "updated_at": "2026-06-22T05:14:42.187059"
+      },
+      {
+        "id": 94,
+        "account_code": "RCOA-1782085483-83",
+        "account_name": "RCOA Test 83",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:44.020849",
+        "updated_at": "2026-06-22T05:14:44.020853"
+      },
+      {
+        "id": 95,
+        "account_code": "RCOA-1782085485-84",
+        "account_name": "RCOA Test 84",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:45.861104",
+        "updated_at": "2026-06-22T05:14:45.861109"
+      },
+      {
+        "id": 96,
+        "account_code": "RCOA-1782085487-85",
+        "account_name": "RCOA Test 85",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:47.741108",
+        "updated_at": "2026-06-22T05:14:47.741114"
+      },
+      {
+        "id": 97,
+        "account_code": "RCOA-1782085489-86",
+        "account_name": "RCOA Test 86",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:49.579027",
+        "updated_at": "2026-06-22T05:14:49.579030"
+      },
+      {
+        "id": 98,
+        "account_code": "RCOA-1782085491-87",
+        "account_name": "RCOA Test 87",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:51.427791",
+        "updated_at": "2026-06-22T05:14:51.427796"
+      },
+      {
+        "id": 99,
+        "account_code": "RCOA-1782085492-88",
+        "account_name": "RCOA Test 88",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:53.253833",
+        "updated_at": "2026-06-22T05:14:53.253837"
+      },
+      {
+        "id": 100,
+        "account_code": "RCOA-1782085494-89",
+        "account_name": "RCOA Test 89",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:55.100518",
+        "updated_at": "2026-06-22T05:14:55.100523"
+      },
+      {
+        "id": 101,
+        "account_code": "RCOA-1782085496-90",
+        "account_name": "RCOA Test 90",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:56.941503",
+        "updated_at": "2026-06-22T05:14:56.941508"
+      },
+      {
+        "id": 102,
+        "account_code": "RCOA-1782085498-91",
+        "account_name": "RCOA Test 91",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:14:58.770411",
+        "updated_at": "2026-06-22T05:14:58.770416"
+      },
+      {
+        "id": 103,
+        "account_code": "RCOA-1782085500-92",
+        "account_name": "RCOA Test 92",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:00.602136",
+        "updated_at": "2026-06-22T05:15:00.602139"
+      },
+      {
+        "id": 104,
+        "account_code": "RCOA-1782085502-93",
+        "account_name": "RCOA Test 93",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:02.473236",
+        "updated_at": "2026-06-22T05:15:02.473240"
+      },
+      {
+        "id": 105,
+        "account_code": "RCOA-1782085504-94",
+        "account_name": "RCOA Test 94",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:04.305981",
+        "updated_at": "2026-06-22T05:15:04.305985"
+      },
+      {
+        "id": 106,
+        "account_code": "RCOA-1782085505-95",
+        "account_name": "RCOA Test 95",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:06.168542",
+        "updated_at": "2026-06-22T05:15:06.168547"
+      },
+      {
+        "id": 107,
+        "account_code": "RCOA-1782085507-96",
+        "account_name": "RCOA Test 96",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:07.999886",
+        "updated_at": "2026-06-22T05:15:07.999890"
+      },
+      {
+        "id": 108,
+        "account_code": "RCOA-1782085509-97",
+        "account_name": "RCOA Test 97",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:09.850792",
+        "updated_at": "2026-06-22T05:15:09.850796"
+      },
+      {
+        "id": 109,
+        "account_code": "RCOA-1782085511-98",
+        "account_name": "RCOA Test 98",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:11.698340",
+        "updated_at": "2026-06-22T05:15:11.698345"
+      },
+      {
+        "id": 110,
+        "account_code": "RCOA-1782085513-99",
+        "account_name": "RCOA Test 99",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:13.545479",
+        "updated_at": "2026-06-22T05:15:13.545483"
+      },
+      {
+        "id": 111,
+        "account_code": "RCOA-1782085526-0",
+        "account_name": "RCOA Test 0",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:26.975103",
+        "updated_at": "2026-06-22T05:15:26.975107"
+      },
+      {
+        "id": 112,
+        "account_code": "RCOA-1782085528-1",
+        "account_name": "RCOA Test 1",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:28.919620",
+        "updated_at": "2026-06-22T05:15:28.919624"
+      },
+      {
+        "id": 113,
+        "account_code": "RCOA-1782085530-2",
+        "account_name": "RCOA Test 2",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:30.751440",
+        "updated_at": "2026-06-22T05:15:30.751444"
+      },
+      {
+        "id": 114,
+        "account_code": "RCOA-1782085532-3",
+        "account_name": "RCOA Test 3",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:32.601309",
+        "updated_at": "2026-06-22T05:15:32.601314"
+      },
+      {
+        "id": 115,
+        "account_code": "RCOA-1782085534-4",
+        "account_name": "RCOA Test 4",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:34.438514",
+        "updated_at": "2026-06-22T05:15:34.438518"
+      },
+      {
+        "id": 116,
+        "account_code": "RCOA-1782085535-5",
+        "account_name": "RCOA Test 5",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:36.258565",
+        "updated_at": "2026-06-22T05:15:36.258570"
+      },
+      {
+        "id": 117,
+        "account_code": "RCOA-1782085537-6",
+        "account_name": "RCOA Test 6",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:38.151767",
+        "updated_at": "2026-06-22T05:15:38.151771"
+      },
+      {
+        "id": 118,
+        "account_code": "RCOA-1782085539-7",
+        "account_name": "RCOA Test 7",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:39.994530",
+        "updated_at": "2026-06-22T05:15:39.994535"
+      },
+      {
+        "id": 119,
+        "account_code": "RCOA-1782085541-8",
+        "account_name": "RCOA Test 8",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:41.851462",
+        "updated_at": "2026-06-22T05:15:41.851467"
+      },
+      {
+        "id": 120,
+        "account_code": "RCOA-1782085543-9",
+        "account_name": "RCOA Test 9",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:43.704889",
+        "updated_at": "2026-06-22T05:15:43.704894"
+      },
+      {
+        "id": 121,
+        "account_code": "RCOA-1782085545-10",
+        "account_name": "RCOA Test 10",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:45.870389",
+        "updated_at": "2026-06-22T05:15:45.870392"
+      },
+      {
+        "id": 122,
+        "account_code": "RCOA-1782085547-11",
+        "account_name": "RCOA Test 11",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:48.049966",
+        "updated_at": "2026-06-22T05:15:48.049969"
+      },
+      {
+        "id": 123,
+        "account_code": "RCOA-1782085549-12",
+        "account_name": "RCOA Test 12",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:50.007020",
+        "updated_at": "2026-06-22T05:15:50.007024"
+      },
+      {
+        "id": 124,
+        "account_code": "RCOA-1782085551-13",
+        "account_name": "RCOA Test 13",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:51.830756",
+        "updated_at": "2026-06-22T05:15:51.830761"
+      },
+      {
+        "id": 125,
+        "account_code": "RCOA-1782085553-14",
+        "account_name": "RCOA Test 14",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:53.672301",
+        "updated_at": "2026-06-22T05:15:53.672305"
+      },
+      {
+        "id": 126,
+        "account_code": "RCOA-1782085555-15",
+        "account_name": "RCOA Test 15",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:55.499381",
+        "updated_at": "2026-06-22T05:15:55.499386"
+      },
+      {
+        "id": 127,
+        "account_code": "RCOA-1782085557-16",
+        "account_name": "RCOA Test 16",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:57.327850",
+        "updated_at": "2026-06-22T05:15:57.327855"
+      },
+      {
+        "id": 128,
+        "account_code": "RCOA-1782085558-17",
+        "account_name": "RCOA Test 17",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:15:59.193087",
+        "updated_at": "2026-06-22T05:15:59.193092"
+      },
+      {
+        "id": 129,
+        "account_code": "RCOA-1782085560-18",
+        "account_name": "RCOA Test 18",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:01.046351",
+        "updated_at": "2026-06-22T05:16:01.046356"
+      },
+      {
+        "id": 130,
+        "account_code": "RCOA-1782085562-19",
+        "account_name": "RCOA Test 19",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:02.987886",
+        "updated_at": "2026-06-22T05:16:02.987892"
+      },
+      {
+        "id": 131,
+        "account_code": "RCOA-1782085564-20",
+        "account_name": "RCOA Test 20",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:04.833224",
+        "updated_at": "2026-06-22T05:16:04.833228"
+      },
+      {
+        "id": 132,
+        "account_code": "RCOA-1782085566-21",
+        "account_name": "RCOA Test 21",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:06.698780",
+        "updated_at": "2026-06-22T05:16:06.698783"
+      },
+      {
+        "id": 133,
+        "account_code": "RCOA-1782085568-22",
+        "account_name": "RCOA Test 22",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:08.531767",
+        "updated_at": "2026-06-22T05:16:08.531771"
+      },
+      {
+        "id": 134,
+        "account_code": "RCOA-1782085570-23",
+        "account_name": "RCOA Test 23",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:10.481640",
+        "updated_at": "2026-06-22T05:16:10.481645"
+      },
+      {
+        "id": 135,
+        "account_code": "RCOA-1782085572-24",
+        "account_name": "RCOA Test 24",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:12.313095",
+        "updated_at": "2026-06-22T05:16:12.313099"
+      },
+      {
+        "id": 136,
+        "account_code": "RCOA-1782085573-25",
+        "account_name": "RCOA Test 25",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:14.141883",
+        "updated_at": "2026-06-22T05:16:14.141887"
+      },
+      {
+        "id": 137,
+        "account_code": "RCOA-1782085575-26",
+        "account_name": "RCOA Test 26",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:15.983114",
+        "updated_at": "2026-06-22T05:16:15.983121"
+      },
+      {
+        "id": 138,
+        "account_code": "RCOA-1782085577-27",
+        "account_name": "RCOA Test 27",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:17.820173",
+        "updated_at": "2026-06-22T05:16:17.820179"
+      },
+      {
+        "id": 139,
+        "account_code": "RCOA-1782085579-28",
+        "account_name": "RCOA Test 28",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:19.664276",
+        "updated_at": "2026-06-22T05:16:19.664279"
+      },
+      {
+        "id": 140,
+        "account_code": "RCOA-1782085581-29",
+        "account_name": "RCOA Test 29",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:21.507094",
+        "updated_at": "2026-06-22T05:16:21.507098"
+      },
+      {
+        "id": 141,
+        "account_code": "RCOA-1782085583-30",
+        "account_name": "RCOA Test 30",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:23.368858",
+        "updated_at": "2026-06-22T05:16:23.368862"
+      },
+      {
+        "id": 142,
+        "account_code": "RCOA-1782085584-31",
+        "account_name": "RCOA Test 31",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:25.203728",
+        "updated_at": "2026-06-22T05:16:25.203732"
+      },
+      {
+        "id": 143,
+        "account_code": "RCOA-1782085586-32",
+        "account_name": "RCOA Test 32",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:27.049067",
+        "updated_at": "2026-06-22T05:16:27.049070"
+      },
+      {
+        "id": 144,
+        "account_code": "RCOA-1782085588-33",
+        "account_name": "RCOA Test 33",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:28.908432",
+        "updated_at": "2026-06-22T05:16:28.908436"
+      },
+      {
+        "id": 145,
+        "account_code": "RCOA-1782085590-34",
+        "account_name": "RCOA Test 34",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:30.807944",
+        "updated_at": "2026-06-22T05:16:30.807948"
+      },
+      {
+        "id": 146,
+        "account_code": "RCOA-1782085592-35",
+        "account_name": "RCOA Test 35",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:32.633888",
+        "updated_at": "2026-06-22T05:16:32.633893"
+      },
+      {
+        "id": 147,
+        "account_code": "RCOA-1782085594-36",
+        "account_name": "RCOA Test 36",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:34.504078",
+        "updated_at": "2026-06-22T05:16:34.504082"
+      },
+      {
+        "id": 148,
+        "account_code": "RCOA-1782085596-37",
+        "account_name": "RCOA Test 37",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:36.391251",
+        "updated_at": "2026-06-22T05:16:36.391256"
+      },
+      {
+        "id": 149,
+        "account_code": "RCOA-1782085597-38",
+        "account_name": "RCOA Test 38",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:38.215253",
+        "updated_at": "2026-06-22T05:16:38.215257"
+      },
+      {
+        "id": 150,
+        "account_code": "RCOA-1782085599-39",
+        "account_name": "RCOA Test 39",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:40.043428",
+        "updated_at": "2026-06-22T05:16:40.043432"
+      },
+      {
+        "id": 151,
+        "account_code": "RCOA-1782085601-40",
+        "account_name": "RCOA Test 40",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:41.894151",
+        "updated_at": "2026-06-22T05:16:41.894156"
+      },
+      {
+        "id": 152,
+        "account_code": "RCOA-1782085603-41",
+        "account_name": "RCOA Test 41",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:43.753223",
+        "updated_at": "2026-06-22T05:16:43.753227"
+      },
+      {
+        "id": 153,
+        "account_code": "RCOA-1782085605-42",
+        "account_name": "RCOA Test 42",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:45.599919",
+        "updated_at": "2026-06-22T05:16:45.599923"
+      },
+      {
+        "id": 154,
+        "account_code": "RCOA-1782085607-43",
+        "account_name": "RCOA Test 43",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:47.481450",
+        "updated_at": "2026-06-22T05:16:47.481456"
+      },
+      {
+        "id": 155,
+        "account_code": "RCOA-1782085609-44",
+        "account_name": "RCOA Test 44",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:49.561148",
+        "updated_at": "2026-06-22T05:16:49.561152"
+      },
+      {
+        "id": 156,
+        "account_code": "RCOA-1782085611-45",
+        "account_name": "RCOA Test 45",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:51.388639",
+        "updated_at": "2026-06-22T05:16:51.388643"
+      },
+      {
+        "id": 157,
+        "account_code": "RCOA-1782085612-46",
+        "account_name": "RCOA Test 46",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:53.218514",
+        "updated_at": "2026-06-22T05:16:53.218519"
+      },
+      {
+        "id": 158,
+        "account_code": "RCOA-1782085614-47",
+        "account_name": "RCOA Test 47",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:55.044389",
+        "updated_at": "2026-06-22T05:16:55.044394"
+      },
+      {
+        "id": 159,
+        "account_code": "RCOA-1782085616-48",
+        "account_name": "RCOA Test 48",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:56.896803",
+        "updated_at": "2026-06-22T05:16:56.896808"
+      },
+      {
+        "id": 160,
+        "account_code": "RCOA-1782085618-49",
+        "account_name": "RCOA Test 49",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:16:58.763544",
+        "updated_at": "2026-06-22T05:16:58.763548"
+      },
+      {
+        "id": 161,
+        "account_code": "RCOA-1782085620-50",
+        "account_name": "RCOA Test 50",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:00.592334",
+        "updated_at": "2026-06-22T05:17:00.592339"
+      },
+      {
+        "id": 162,
+        "account_code": "RCOA-1782085622-51",
+        "account_name": "RCOA Test 51",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:02.445729",
+        "updated_at": "2026-06-22T05:17:02.445733"
+      },
+      {
+        "id": 163,
+        "account_code": "RCOA-1782085624-52",
+        "account_name": "RCOA Test 52",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:04.313268",
+        "updated_at": "2026-06-22T05:17:04.313273"
+      },
+      {
+        "id": 164,
+        "account_code": "RCOA-1782085625-53",
+        "account_name": "RCOA Test 53",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:06.213783",
+        "updated_at": "2026-06-22T05:17:06.213787"
+      },
+      {
+        "id": 165,
+        "account_code": "RCOA-1782085627-54",
+        "account_name": "RCOA Test 54",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:08.057812",
+        "updated_at": "2026-06-22T05:17:08.057816"
+      },
+      {
+        "id": 166,
+        "account_code": "RCOA-1782085629-55",
+        "account_name": "RCOA Test 55",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:09.902341",
+        "updated_at": "2026-06-22T05:17:09.902345"
+      },
+      {
+        "id": 167,
+        "account_code": "RCOA-1782085631-56",
+        "account_name": "RCOA Test 56",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:11.763850",
+        "updated_at": "2026-06-22T05:17:11.763854"
+      },
+      {
+        "id": 168,
+        "account_code": "RCOA-1782085633-57",
+        "account_name": "RCOA Test 57",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:13.626739",
+        "updated_at": "2026-06-22T05:17:13.626743"
+      },
+      {
+        "id": 169,
+        "account_code": "RCOA-1782085635-58",
+        "account_name": "RCOA Test 58",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:15.494499",
+        "updated_at": "2026-06-22T05:17:15.494502"
+      },
+      {
+        "id": 170,
+        "account_code": "RCOA-1782085637-59",
+        "account_name": "RCOA Test 59",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:17.334202",
+        "updated_at": "2026-06-22T05:17:17.334209"
+      },
+      {
+        "id": 171,
+        "account_code": "RCOA-1782085638-60",
+        "account_name": "RCOA Test 60",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:19.202071",
+        "updated_at": "2026-06-22T05:17:19.202075"
+      },
+      {
+        "id": 172,
+        "account_code": "RCOA-1782085640-61",
+        "account_name": "RCOA Test 61",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:21.050228",
+        "updated_at": "2026-06-22T05:17:21.050242"
+      },
+      {
+        "id": 173,
+        "account_code": "RCOA-1782085642-62",
+        "account_name": "RCOA Test 62",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:22.884179",
+        "updated_at": "2026-06-22T05:17:22.884183"
+      },
+      {
+        "id": 174,
+        "account_code": "RCOA-1782085644-63",
+        "account_name": "RCOA Test 63",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:24.707127",
+        "updated_at": "2026-06-22T05:17:24.707131"
+      },
+      {
+        "id": 175,
+        "account_code": "RCOA-1782085646-64",
+        "account_name": "RCOA Test 64",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:26.551460",
+        "updated_at": "2026-06-22T05:17:26.551463"
+      },
+      {
+        "id": 176,
+        "account_code": "RCOA-1782085648-65",
+        "account_name": "RCOA Test 65",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:28.382736",
+        "updated_at": "2026-06-22T05:17:28.382742"
+      },
+      {
+        "id": 177,
+        "account_code": "RCOA-1782085650-66",
+        "account_name": "RCOA Test 66",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:30.358404",
+        "updated_at": "2026-06-22T05:17:30.358408"
+      },
+      {
+        "id": 178,
+        "account_code": "RCOA-1782085651-67",
+        "account_name": "RCOA Test 67",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:32.234178",
+        "updated_at": "2026-06-22T05:17:32.234182"
+      },
+      {
+        "id": 179,
+        "account_code": "RCOA-1782085653-68",
+        "account_name": "RCOA Test 68",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:34.083758",
+        "updated_at": "2026-06-22T05:17:34.083763"
+      },
+      {
+        "id": 180,
+        "account_code": "RCOA-1782085655-69",
+        "account_name": "RCOA Test 69",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:35.929929",
+        "updated_at": "2026-06-22T05:17:35.929933"
+      },
+      {
+        "id": 181,
+        "account_code": "RCOA-1782085657-70",
+        "account_name": "RCOA Test 70",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:37.907962",
+        "updated_at": "2026-06-22T05:17:37.907967"
+      },
+      {
+        "id": 182,
+        "account_code": "RCOA-1782085659-71",
+        "account_name": "RCOA Test 71",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:39.772349",
+        "updated_at": "2026-06-22T05:17:39.772354"
+      },
+      {
+        "id": 183,
+        "account_code": "RCOA-1782085661-72",
+        "account_name": "RCOA Test 72",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:41.598039",
+        "updated_at": "2026-06-22T05:17:41.598042"
+      },
+      {
+        "id": 184,
+        "account_code": "RCOA-1782085663-73",
+        "account_name": "RCOA Test 73",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:43.507753",
+        "updated_at": "2026-06-22T05:17:43.507761"
+      },
+      {
+        "id": 185,
+        "account_code": "RCOA-1782085665-74",
+        "account_name": "RCOA Test 74",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:45.350881",
+        "updated_at": "2026-06-22T05:17:45.350884"
+      },
+      {
+        "id": 186,
+        "account_code": "RCOA-1782085666-75",
+        "account_name": "RCOA Test 75",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:47.181148",
+        "updated_at": "2026-06-22T05:17:47.181152"
+      },
+      {
+        "id": 187,
+        "account_code": "RCOA-1782085668-76",
+        "account_name": "RCOA Test 76",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:49.006898",
+        "updated_at": "2026-06-22T05:17:49.006901"
+      },
+      {
+        "id": 188,
+        "account_code": "RCOA-1782085670-77",
+        "account_name": "RCOA Test 77",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:50.851711",
+        "updated_at": "2026-06-22T05:17:50.851715"
+      },
+      {
+        "id": 189,
+        "account_code": "RCOA-1782085673-78",
+        "account_name": "RCOA Test 78",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:53.695080",
+        "updated_at": "2026-06-22T05:17:53.695084"
+      },
+      {
+        "id": 190,
+        "account_code": "RCOA-1782085675-79",
+        "account_name": "RCOA Test 79",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:55.551057",
+        "updated_at": "2026-06-22T05:17:55.551061"
+      },
+      {
+        "id": 191,
+        "account_code": "RCOA-1782085677-80",
+        "account_name": "RCOA Test 80",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:57.382685",
+        "updated_at": "2026-06-22T05:17:57.382689"
+      },
+      {
+        "id": 192,
+        "account_code": "RCOA-1782085678-81",
+        "account_name": "RCOA Test 81",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:17:59.215612",
+        "updated_at": "2026-06-22T05:17:59.215615"
+      },
+      {
+        "id": 193,
+        "account_code": "RCOA-1782085680-82",
+        "account_name": "RCOA Test 82",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:01.039985",
+        "updated_at": "2026-06-22T05:18:01.039989"
+      },
+      {
+        "id": 194,
+        "account_code": "RCOA-1782085682-83",
+        "account_name": "RCOA Test 83",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:02.869738",
+        "updated_at": "2026-06-22T05:18:02.869741"
+      },
+      {
+        "id": 195,
+        "account_code": "RCOA-1782085684-84",
+        "account_name": "RCOA Test 84",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:04.693015",
+        "updated_at": "2026-06-22T05:18:04.693019"
+      },
+      {
+        "id": 196,
+        "account_code": "RCOA-1782085686-85",
+        "account_name": "RCOA Test 85",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:06.521937",
+        "updated_at": "2026-06-22T05:18:06.521941"
+      },
+      {
+        "id": 197,
+        "account_code": "RCOA-1782085688-86",
+        "account_name": "RCOA Test 86",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:08.354344",
+        "updated_at": "2026-06-22T05:18:08.354350"
+      },
+      {
+        "id": 198,
+        "account_code": "RCOA-1782085689-87",
+        "account_name": "RCOA Test 87",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:10.252067",
+        "updated_at": "2026-06-22T05:18:10.252071"
+      },
+      {
+        "id": 199,
+        "account_code": "RCOA-1782085691-88",
+        "account_name": "RCOA Test 88",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:12.090401",
+        "updated_at": "2026-06-22T05:18:12.090406"
+      },
+      {
+        "id": 200,
+        "account_code": "RCOA-1782085693-89",
+        "account_name": "RCOA Test 89",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:13.989046",
+        "updated_at": "2026-06-22T05:18:13.989050"
+      },
+      {
+        "id": 201,
+        "account_code": "RCOA-1782085695-90",
+        "account_name": "RCOA Test 90",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:15.865279",
+        "updated_at": "2026-06-22T05:18:15.865284"
+      },
+      {
+        "id": 202,
+        "account_code": "RCOA-1782085697-91",
+        "account_name": "RCOA Test 91",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:17.700393",
+        "updated_at": "2026-06-22T05:18:17.700396"
+      },
+      {
+        "id": 203,
+        "account_code": "RCOA-1782085699-92",
+        "account_name": "RCOA Test 92",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:19.553620",
+        "updated_at": "2026-06-22T05:18:19.553625"
+      },
+      {
+        "id": 204,
+        "account_code": "RCOA-1782085701-93",
+        "account_name": "RCOA Test 93",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:21.425469",
+        "updated_at": "2026-06-22T05:18:21.425474"
+      },
+      {
+        "id": 205,
+        "account_code": "RCOA-1782085702-94",
+        "account_name": "RCOA Test 94",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:23.269345",
+        "updated_at": "2026-06-22T05:18:23.269350"
+      },
+      {
+        "id": 206,
+        "account_code": "RCOA-1782085704-95",
+        "account_name": "RCOA Test 95",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:25.144237",
+        "updated_at": "2026-06-22T05:18:25.144242"
+      },
+      {
+        "id": 207,
+        "account_code": "RCOA-1782085706-96",
+        "account_name": "RCOA Test 96",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:26.994339",
+        "updated_at": "2026-06-22T05:18:26.994344"
+      },
+      {
+        "id": 208,
+        "account_code": "RCOA-1782085708-97",
+        "account_name": "RCOA Test 97",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:28.825394",
+        "updated_at": "2026-06-22T05:18:28.825398"
+      },
+      {
+        "id": 209,
+        "account_code": "RCOA-1782085710-98",
+        "account_name": "RCOA Test 98",
+        "account_type": "asset",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:30.649805",
+        "updated_at": "2026-06-22T05:18:30.649809"
+      },
+      {
+        "id": 210,
+        "account_code": "RCOA-1782085712-99",
+        "account_name": "RCOA Test 99",
+        "account_type": "expense",
+        "parent_account_id": null,
+        "is_active": true,
+        "created_at": "2026-06-22T05:18:32.490887",
+        "updated_at": "2026-06-22T05:18:32.490891"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/journals",
+    "status": 200,
+    "body": {
+      "id": 18,
+      "reference": "JRN-001",
+      "description": "Test Journal",
+      "status": "draft",
+      "date": "2026-06-22T00:00:00Z",
+      "submitted_at": null,
+      "approved_at": null,
+      "posted_at": null,
+      "lines": [
+        {
+          "id": 35,
+          "journal_id": 18,
+          "account_id": 1,
+          "memo": "Debit line",
+          "debit": 100.0,
+          "credit": 0.0,
+          "created_at": "2026-06-22T06:04:46.841285",
+          "updated_at": "2026-06-22T06:04:46.841290"
+        },
+        {
+          "id": 36,
+          "journal_id": 18,
+          "account_id": 1,
+          "memo": "Credit line",
+          "debit": 0.0,
+          "credit": 100.0,
+          "created_at": "2026-06-22T06:04:46.841291",
+          "updated_at": "2026-06-22T06:04:46.841292"
+        }
+      ],
+      "created_at": "2026-06-22T06:04:46.596749",
+      "updated_at": "2026-06-22T06:04:46.596754"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/journals",
+    "status": 200,
+    "body": [
+      {
+        "id": 14,
+        "reference": "BP-REQ-1",
+        "description": "Payment for Bill BILL-REQ-1",
+        "status": "draft",
+        "date": "2026-06-22T05:06:59.480963Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 27,
+            "journal_id": 14,
+            "account_id": 4,
+            "memo": "Payment for Bill BILL-REQ-1",
+            "debit": 800.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T05:07:02.117988",
+            "updated_at": "2026-06-22T05:07:02.117992"
+          },
+          {
+            "id": 28,
+            "journal_id": 14,
+            "account_id": 1,
+            "memo": "Payment for Bill BILL-REQ-1",
+            "debit": 0.0,
+            "credit": 800.0,
+            "created_at": "2026-06-22T05:07:02.117994",
+            "updated_at": "2026-06-22T05:07:02.117995"
+          }
+        ],
+        "created_at": "2026-06-22T05:07:01.850339",
+        "updated_at": "2026-06-22T05:07:01.850343"
+      },
+      {
+        "id": 13,
+        "reference": "BILL-REQ-1",
+        "description": "Bill: Req bill",
+        "status": "draft",
+        "date": "2026-06-22T05:06:53.089914Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 25,
+            "journal_id": 13,
+            "account_id": 7,
+            "memo": "Bill BILL-REQ-1",
+            "debit": 800.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T05:06:55.553227",
+            "updated_at": "2026-06-22T05:06:55.553231"
+          },
+          {
+            "id": 26,
+            "journal_id": 13,
+            "account_id": 4,
+            "memo": "Payable for Bill BILL-REQ-1",
+            "debit": 0.0,
+            "credit": 800.0,
+            "created_at": "2026-06-22T05:06:55.553233",
+            "updated_at": "2026-06-22T05:06:55.553234"
+          }
+        ],
+        "created_at": "2026-06-22T05:06:55.232922",
+        "updated_at": "2026-06-22T05:06:55.232926"
+      },
+      {
+        "id": 12,
+        "reference": "PAY-REQ-1",
+        "description": "Payment for Invoice INV-REQ-1",
+        "status": "draft",
+        "date": "2026-06-22T05:06:44.106512Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 23,
+            "journal_id": 12,
+            "account_id": 1,
+            "memo": "Payment for Invoice INV-REQ-1",
+            "debit": 1500.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T05:06:46.792879",
+            "updated_at": "2026-06-22T05:06:46.792883"
+          },
+          {
+            "id": 24,
+            "journal_id": 12,
+            "account_id": 3,
+            "memo": "Payment received for INV-REQ-1",
+            "debit": 0.0,
+            "credit": 1500.0,
+            "created_at": "2026-06-22T05:06:46.792884",
+            "updated_at": "2026-06-22T05:06:46.792886"
+          }
+        ],
+        "created_at": "2026-06-22T05:06:46.526854",
+        "updated_at": "2026-06-22T05:06:46.526858"
+      },
+      {
+        "id": 11,
+        "reference": "INV-REQ-1",
+        "description": "Invoice: Req invoice",
+        "status": "draft",
+        "date": "2026-06-22T05:06:37.930781Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 21,
+            "journal_id": 11,
+            "account_id": 3,
+            "memo": "Invoice INV-REQ-1",
+            "debit": 1500.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T05:06:40.068166",
+            "updated_at": "2026-06-22T05:06:40.068170"
+          },
+          {
+            "id": 22,
+            "journal_id": 11,
+            "account_id": 6,
+            "memo": "Revenue from invoice INV-REQ-1",
+            "debit": 0.0,
+            "credit": 1500.0,
+            "created_at": "2026-06-22T05:06:40.068172",
+            "updated_at": "2026-06-22T05:06:40.068173"
+          }
+        ],
+        "created_at": "2026-06-22T05:06:39.799218",
+        "updated_at": "2026-06-22T05:06:39.799222"
+      },
+      {
+        "id": 10,
+        "reference": "INC-TEST",
+        "description": "Income: Test income",
+        "status": "draft",
+        "date": "2026-06-22T03:49:00.719491Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 19,
+            "journal_id": 10,
+            "account_id": 1,
+            "memo": "Receipt from Test income",
+            "debit": 20.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T03:49:03.495811",
+            "updated_at": "2026-06-22T03:49:03.495816"
+          },
+          {
+            "id": 20,
+            "journal_id": 10,
+            "account_id": 1,
+            "memo": "Test income",
+            "debit": 0.0,
+            "credit": 20.0,
+            "created_at": "2026-06-22T03:49:03.495819",
+            "updated_at": "2026-06-22T03:49:03.495821"
+          }
+        ],
+        "created_at": "2026-06-22T03:49:03.205909",
+        "updated_at": "2026-06-22T03:49:03.205914"
+      },
+      {
+        "id": 9,
+        "reference": "EXP-TEST",
+        "description": "Expense: Test expense",
+        "status": "draft",
+        "date": "2026-06-22T03:48:52.798146Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 17,
+            "journal_id": 9,
+            "account_id": 1,
+            "memo": "Test expense",
+            "debit": 10.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T03:48:55.576694",
+            "updated_at": "2026-06-22T03:48:55.576702"
+          },
+          {
+            "id": 18,
+            "journal_id": 9,
+            "account_id": 1,
+            "memo": "Payment for Test expense",
+            "debit": 0.0,
+            "credit": 10.0,
+            "created_at": "2026-06-22T03:48:55.576705",
+            "updated_at": "2026-06-22T03:48:55.576707"
+          }
+        ],
+        "created_at": "2026-06-22T03:48:55.246143",
+        "updated_at": "2026-06-22T03:48:55.246148"
+      },
+      {
+        "id": 8,
+        "reference": "INC-TEST",
+        "description": "Income: Test income",
+        "status": "draft",
+        "date": "2026-06-22T03:45:39.707261Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 15,
+            "journal_id": 8,
+            "account_id": 1,
+            "memo": "Receipt from Test income",
+            "debit": 20.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T03:45:42.431901",
+            "updated_at": "2026-06-22T03:45:42.431907"
+          },
+          {
+            "id": 16,
+            "journal_id": 8,
+            "account_id": 1,
+            "memo": "Test income",
+            "debit": 0.0,
+            "credit": 20.0,
+            "created_at": "2026-06-22T03:45:42.431910",
+            "updated_at": "2026-06-22T03:45:42.431912"
+          }
+        ],
+        "created_at": "2026-06-22T03:45:42.132833",
+        "updated_at": "2026-06-22T03:45:42.132838"
+      },
+      {
+        "id": 7,
+        "reference": "INC-1",
+        "description": "Income: Test income",
+        "status": "draft",
+        "date": "2026-06-22T03:34:02.681322Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 13,
+            "journal_id": 7,
+            "account_id": 1,
+            "memo": "Receipt from Test income",
+            "debit": 45.67,
+            "credit": 0.0,
+            "created_at": "2026-06-22T03:34:05.993956",
+            "updated_at": "2026-06-22T03:34:05.993962"
+          },
+          {
+            "id": 14,
+            "journal_id": 7,
+            "account_id": 2,
+            "memo": "Test income",
+            "debit": 0.0,
+            "credit": 45.67,
+            "created_at": "2026-06-22T03:34:05.993965",
+            "updated_at": "2026-06-22T03:34:05.993966"
+          }
+        ],
+        "created_at": "2026-06-22T03:34:05.377643",
+        "updated_at": "2026-06-22T03:34:05.377648"
+      },
+      {
+        "id": 6,
+        "reference": "EXP-1",
+        "description": "Expense: Test expense",
+        "status": "draft",
+        "date": "2026-06-22T03:33:49.063906Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 11,
+            "journal_id": 6,
+            "account_id": 2,
+            "memo": "Test expense",
+            "debit": 12.34,
+            "credit": 0.0,
+            "created_at": "2026-06-22T03:33:52.329614",
+            "updated_at": "2026-06-22T03:33:52.329619"
+          },
+          {
+            "id": 12,
+            "journal_id": 6,
+            "account_id": 1,
+            "memo": "Payment for Test expense",
+            "debit": 0.0,
+            "credit": 12.34,
+            "created_at": "2026-06-22T03:33:52.329621",
+            "updated_at": "2026-06-22T03:33:52.329622"
+          }
+        ],
+        "created_at": "2026-06-22T03:33:52.027144",
+        "updated_at": "2026-06-22T03:33:52.027151"
+      },
+      {
+        "id": 3,
+        "reference": "JNL-1",
+        "description": "Test journal",
+        "status": "posted",
+        "date": "2026-06-22T03:12:11.159558Z",
+        "submitted_at": "2026-06-22T03:12:14.530250Z",
+        "approved_at": "2026-06-22T03:12:17.744742Z",
+        "posted_at": "2026-06-22T03:12:21.553438Z",
+        "lines": [
+          {
+            "id": 5,
+            "journal_id": 3,
+            "account_id": 1,
+            "memo": "dr",
+            "debit": 100.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T03:12:11.512982",
+            "updated_at": "2026-06-22T03:12:11.512989"
+          },
+          {
+            "id": 6,
+            "journal_id": 3,
+            "account_id": 1,
+            "memo": "cr",
+            "debit": 0.0,
+            "credit": 100.0,
+            "created_at": "2026-06-22T03:12:11.512992",
+            "updated_at": "2026-06-22T03:12:11.512994"
+          }
+        ],
+        "created_at": "2026-06-22T03:12:11.160143",
+        "updated_at": "2026-06-22T03:12:21.554424"
+      },
+      {
+        "id": 15,
+        "reference": "JRN-001",
+        "description": "Test Journal",
+        "status": "draft",
+        "date": "2026-06-22T00:00:00Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 29,
+            "journal_id": 15,
+            "account_id": 1,
+            "memo": "Debit line",
+            "debit": 100.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T06:03:42.210984",
+            "updated_at": "2026-06-22T06:03:42.211000"
+          },
+          {
+            "id": 30,
+            "journal_id": 15,
+            "account_id": 1,
+            "memo": "Credit line",
+            "debit": 0.0,
+            "credit": 100.0,
+            "created_at": "2026-06-22T06:03:42.211002",
+            "updated_at": "2026-06-22T06:03:42.211003"
+          }
+        ],
+        "created_at": "2026-06-22T06:03:41.943948",
+        "updated_at": "2026-06-22T06:03:41.943953"
+      },
+      {
+        "id": 16,
+        "reference": "INV-001",
+        "description": "Invoice: Test Invoice",
+        "status": "draft",
+        "date": "2026-06-22T00:00:00Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 31,
+            "journal_id": 16,
+            "account_id": 3,
+            "memo": "Invoice INV-001",
+            "debit": 150.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T06:04:01.799953",
+            "updated_at": "2026-06-22T06:04:01.799958"
+          },
+          {
+            "id": 32,
+            "journal_id": 16,
+            "account_id": 6,
+            "memo": "Revenue from invoice INV-001",
+            "debit": 0.0,
+            "credit": 150.0,
+            "created_at": "2026-06-22T06:04:01.799960",
+            "updated_at": "2026-06-22T06:04:01.799961"
+          }
+        ],
+        "created_at": "2026-06-22T06:04:01.553349",
+        "updated_at": "2026-06-22T06:04:01.553353"
+      },
+      {
+        "id": 17,
+        "reference": "BILL-001",
+        "description": "Bill: Test Bill",
+        "status": "draft",
+        "date": "2026-06-22T00:00:00Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 33,
+            "journal_id": 17,
+            "account_id": 7,
+            "memo": "Bill BILL-001",
+            "debit": 120.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T06:04:10.836755",
+            "updated_at": "2026-06-22T06:04:10.836759"
+          },
+          {
+            "id": 34,
+            "journal_id": 17,
+            "account_id": 4,
+            "memo": "Payable for Bill BILL-001",
+            "debit": 0.0,
+            "credit": 120.0,
+            "created_at": "2026-06-22T06:04:10.836761",
+            "updated_at": "2026-06-22T06:04:10.836762"
+          }
+        ],
+        "created_at": "2026-06-22T06:04:10.590971",
+        "updated_at": "2026-06-22T06:04:10.590975"
+      },
+      {
+        "id": 18,
+        "reference": "JRN-001",
+        "description": "Test Journal",
+        "status": "draft",
+        "date": "2026-06-22T00:00:00Z",
+        "submitted_at": null,
+        "approved_at": null,
+        "posted_at": null,
+        "lines": [
+          {
+            "id": 35,
+            "journal_id": 18,
+            "account_id": 1,
+            "memo": "Debit line",
+            "debit": 100.0,
+            "credit": 0.0,
+            "created_at": "2026-06-22T06:04:46.841285",
+            "updated_at": "2026-06-22T06:04:46.841290"
+          },
+          {
+            "id": 36,
+            "journal_id": 18,
+            "account_id": 1,
+            "memo": "Credit line",
+            "debit": 0.0,
+            "credit": 100.0,
+            "created_at": "2026-06-22T06:04:46.841291",
+            "updated_at": "2026-06-22T06:04:46.841292"
+          }
+        ],
+        "created_at": "2026-06-22T06:04:46.596749",
+        "updated_at": "2026-06-22T06:04:46.596754"
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/ledger",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "journal_id": 3,
+        "account_id": 1,
+        "debit": 100.0,
+        "credit": 0.0,
+        "posting_date": "2026-06-22T03:12:11.159558Z",
+        "created_at": "2026-06-22T03:12:21.853801",
+        "updated_at": "2026-06-22T03:12:21.853806"
+      },
+      {
+        "id": 2,
+        "journal_id": 3,
+        "account_id": 1,
+        "debit": 0.0,
+        "credit": 100.0,
+        "posting_date": "2026-06-22T03:12:11.159558Z",
+        "created_at": "2026-06-22T03:12:21.853808",
+        "updated_at": "2026-06-22T03:12:21.853810"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/budgets",
+    "status": 200,
+    "body": {
+      "id": 4,
+      "name": "Regression Budget",
+      "fiscal_year": 2026,
+      "total_amount": 1000.0,
+      "status": "draft",
+      "start_date": "2026-01-01T00:00:00Z",
+      "end_date": "2026-12-31T23:59:59Z",
+      "created_at": "2026-06-22T06:04:54.383989",
+      "updated_at": "2026-06-22T06:04:54.383993"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/budgets",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "name": "test",
+        "fiscal_year": 2026,
+        "total_amount": 200000.0,
+        "status": "draft",
+        "start_date": "2026-06-20T00:00:00Z",
+        "end_date": "2027-06-20T00:00:00Z",
+        "created_at": "2026-06-22T04:43:03.119492",
+        "updated_at": "2026-06-22T04:43:03.119496"
+      },
+      {
+        "id": 2,
+        "name": "Req Test Budget",
+        "fiscal_year": 2026,
+        "total_amount": 10000.0,
+        "status": "draft",
+        "start_date": "2026-06-22T00:00:00Z",
+        "end_date": "2027-06-22T00:00:00Z",
+        "created_at": "2026-06-22T05:06:30.051003",
+        "updated_at": "2026-06-22T05:06:30.051007"
+      },
+      {
+        "id": 3,
+        "name": "Regression Budget",
+        "fiscal_year": 2026,
+        "total_amount": 1000.0,
+        "status": "draft",
+        "start_date": "2026-01-01T00:00:00Z",
+        "end_date": "2026-12-31T23:59:59Z",
+        "created_at": "2026-06-22T06:03:49.149819",
+        "updated_at": "2026-06-22T06:03:49.149822"
+      },
+      {
+        "id": 4,
+        "name": "Regression Budget",
+        "fiscal_year": 2026,
+        "total_amount": 1000.0,
+        "status": "draft",
+        "start_date": "2026-01-01T00:00:00Z",
+        "end_date": "2026-12-31T23:59:59Z",
+        "created_at": "2026-06-22T06:04:54.383989",
+        "updated_at": "2026-06-22T06:04:54.383993"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/budgets/4/lines",
+    "status": 200,
+    "body": {
+      "id": 3,
+      "budget_id": 4,
+      "account_id": 1,
+      "allocated_amount": 250.0,
+      "spent_amount": 100.0,
+      "consumed_percentage": 40.0,
+      "created_at": "2026-06-22T06:04:57.765635",
+      "updated_at": "2026-06-22T06:04:59.217676"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/budgets/4/lines",
+    "status": 200,
+    "body": [
+      {
+        "id": 3,
+        "budget_id": 4,
+        "account_id": 1,
+        "allocated_amount": 250.0,
+        "spent_amount": 100.0,
+        "consumed_percentage": 40.0,
+        "created_at": "2026-06-22T06:04:57.765635",
+        "updated_at": "2026-06-22T06:04:59.217676"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/customers",
+    "status": 200,
+    "body": {
+      "id": 3,
+      "name": "Test Customer",
+      "email": "customer@example.com",
+      "phone": "1234567890",
+      "address": "123 Test Lane",
+      "is_active": "active",
+      "created_at": "2026-06-22T06:05:01.870922",
+      "updated_at": "2026-06-22T06:05:01.870925"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/customers",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "name": "Req Customer",
+        "email": "rc@example.com",
+        "phone": null,
+        "address": null,
+        "is_active": "active",
+        "created_at": "2026-06-22T05:06:36.363361",
+        "updated_at": "2026-06-22T05:06:36.363365"
+      },
+      {
+        "id": 2,
+        "name": "Test Customer",
+        "email": "customer@example.com",
+        "phone": "1234567890",
+        "address": "123 Test Lane",
+        "is_active": "active",
+        "created_at": "2026-06-22T06:03:56.931487",
+        "updated_at": "2026-06-22T06:03:56.931490"
+      },
+      {
+        "id": 3,
+        "name": "Test Customer",
+        "email": "customer@example.com",
+        "phone": "1234567890",
+        "address": "123 Test Lane",
+        "is_active": "active",
+        "created_at": "2026-06-22T06:05:01.870922",
+        "updated_at": "2026-06-22T06:05:01.870925"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/invoices",
+    "status": 200,
+    "body": {
+      "id": 3,
+      "customer_id": 3,
+      "invoice_number": "INV-001",
+      "invoice_date": "2026-06-22T00:00:00Z",
+      "due_date": "2026-07-22T00:00:00Z",
+      "amount": 150.0,
+      "paid_amount": 0.0,
+      "status": "draft",
+      "description": "Test Invoice",
+      "journal_id": 19,
+      "created_at": "2026-06-22T06:05:04.775582",
+      "updated_at": "2026-06-22T06:05:07.912703"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/invoices",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "customer_id": 1,
+        "invoice_number": "INV-REQ-1",
+        "invoice_date": "2026-06-22T05:06:37.930781Z",
+        "due_date": "2026-07-22T05:06:37.930799Z",
+        "amount": 1500.0,
+        "paid_amount": 1500.0,
+        "status": "paid",
+        "description": "Req invoice",
+        "journal_id": 11,
+        "created_at": "2026-06-22T05:06:38.193085",
+        "updated_at": "2026-06-22T05:06:49.685772"
+      },
+      {
+        "id": 2,
+        "customer_id": 2,
+        "invoice_number": "INV-001",
+        "invoice_date": "2026-06-22T00:00:00Z",
+        "due_date": "2026-07-22T00:00:00Z",
+        "amount": 150.0,
+        "paid_amount": 0.0,
+        "status": "draft",
+        "description": "Test Invoice",
+        "journal_id": 16,
+        "created_at": "2026-06-22T06:04:00.070346",
+        "updated_at": "2026-06-22T06:04:03.366083"
+      },
+      {
+        "id": 3,
+        "customer_id": 3,
+        "invoice_number": "INV-001",
+        "invoice_date": "2026-06-22T00:00:00Z",
+        "due_date": "2026-07-22T00:00:00Z",
+        "amount": 150.0,
+        "paid_amount": 0.0,
+        "status": "draft",
+        "description": "Test Invoice",
+        "journal_id": 19,
+        "created_at": "2026-06-22T06:05:04.775582",
+        "updated_at": "2026-06-22T06:05:07.912703"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/invoices/3/payments",
+    "status": 422,
+    "body": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "invoice_id"
+          ],
+          "msg": "Field required",
+          "input": {
+            "payment_date": "2026-06-23T00:00:00",
+            "amount": 150.0,
+            "reference": "PAY-001"
+          },
+          "url": "https://errors.pydantic.dev/2.13/v/missing"
+        }
+      ]
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/vendors",
+    "status": 200,
+    "body": {
+      "id": 3,
+      "name": "Test Vendor",
+      "email": "vendor@example.com",
+      "phone": "0987654321",
+      "address": "456 Vendor Road",
+      "is_active": "active",
+      "created_at": "2026-06-22T06:05:10.560489",
+      "updated_at": "2026-06-22T06:05:10.560493"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/vendors",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "name": "Req Vendor",
+        "email": "rv@example.com",
+        "phone": null,
+        "address": null,
+        "is_active": "active",
+        "created_at": "2026-06-22T05:06:51.521146",
+        "updated_at": "2026-06-22T05:06:51.521150"
+      },
+      {
+        "id": 2,
+        "name": "Test Vendor",
+        "email": "vendor@example.com",
+        "phone": "0987654321",
+        "address": "456 Vendor Road",
+        "is_active": "active",
+        "created_at": "2026-06-22T06:04:06.146641",
+        "updated_at": "2026-06-22T06:04:06.146644"
+      },
+      {
+        "id": 3,
+        "name": "Test Vendor",
+        "email": "vendor@example.com",
+        "phone": "0987654321",
+        "address": "456 Vendor Road",
+        "is_active": "active",
+        "created_at": "2026-06-22T06:05:10.560489",
+        "updated_at": "2026-06-22T06:05:10.560493"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/bills",
+    "status": 200,
+    "body": {
+      "id": 3,
+      "vendor_id": 3,
+      "bill_number": "BILL-001",
+      "bill_date": "2026-06-22T00:00:00Z",
+      "due_date": "2026-07-22T00:00:00Z",
+      "amount": 120.0,
+      "paid_amount": 0.0,
+      "status": "draft",
+      "description": "Test Bill",
+      "journal_id": 20,
+      "created_at": "2026-06-22T06:05:13.449390",
+      "updated_at": "2026-06-22T06:05:16.584919"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/bills",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "vendor_id": 1,
+        "bill_number": "BILL-REQ-1",
+        "bill_date": "2026-06-22T05:06:53.089914Z",
+        "due_date": "2026-07-22T05:06:53.089926Z",
+        "amount": 800.0,
+        "paid_amount": 800.0,
+        "status": "paid",
+        "description": "Req bill",
+        "journal_id": 13,
+        "created_at": "2026-06-22T05:06:53.353863",
+        "updated_at": "2026-06-22T05:07:05.219065"
+      },
+      {
+        "id": 2,
+        "vendor_id": 2,
+        "bill_number": "BILL-001",
+        "bill_date": "2026-06-22T00:00:00Z",
+        "due_date": "2026-07-22T00:00:00Z",
+        "amount": 120.0,
+        "paid_amount": 0.0,
+        "status": "draft",
+        "description": "Test Bill",
+        "journal_id": 17,
+        "created_at": "2026-06-22T06:04:09.117642",
+        "updated_at": "2026-06-22T06:04:12.312351"
+      },
+      {
+        "id": 3,
+        "vendor_id": 3,
+        "bill_number": "BILL-001",
+        "bill_date": "2026-06-22T00:00:00Z",
+        "due_date": "2026-07-22T00:00:00Z",
+        "amount": 120.0,
+        "paid_amount": 0.0,
+        "status": "draft",
+        "description": "Test Bill",
+        "journal_id": 20,
+        "created_at": "2026-06-22T06:05:13.449390",
+        "updated_at": "2026-06-22T06:05:16.584919"
+      }
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/accounts/bills/3/payments",
+    "status": 422,
+    "body": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "bill_id"
+          ],
+          "msg": "Field required",
+          "input": {
+            "payment_date": "2026-06-23T00:00:00",
+            "amount": 120.0,
+            "reference": "VPAY-001"
+          },
+          "url": "https://errors.pydantic.dev/2.13/v/missing"
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/reports/trial-balance",
+    "status": 200,
+    "body": {
+      "accounts": [
+        {
+          "account_id": 1,
+          "account_code": "1000",
+          "account_name": "Cash - Test",
+          "account_type": "asset",
+          "debit": 100.0,
+          "credit": 100.0
+        }
+      ],
+      "total_debit": 100.0,
+      "total_credit": 100.0,
+      "is_balanced": true,
+      "generated_at": "2026-06-22T06:05:19.718142"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/reports/profit-loss",
+    "status": 200,
+    "body": {
+      "revenue": 0.0,
+      "expenses": 0.0,
+      "net_profit": 0.0,
+      "generated_at": "2026-06-22T06:05:20.929479"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/accounts/reports/balance-sheet",
+    "status": 200,
+    "body": {
+      "assets": 0.0,
+      "liabilities": 0.0,
+      "equity": 0.0,
+      "is_balanced": true,
+      "generated_at": "2026-06-22T06:05:22.381401"
+    }
+  }
+]

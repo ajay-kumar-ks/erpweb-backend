@@ -1,0 +1,122 @@
+[
+  {
+    "table": "bills",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "budget_lines",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "budgets",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "chart_of_accounts",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "customer_payments",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "customers",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "event_store",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "expenses",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "income",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "invoices",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "journal_entries",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "journal_lines",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "ledger_entries",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "vendor_payments",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  },
+  {
+    "table": "vendors",
+    "total_rows": 0,
+    "distinct_ids": 0,
+    "duplicate_id_count": 0,
+    "duplicate_samples": [],
+    "id_remap_required": false
+  }
+]

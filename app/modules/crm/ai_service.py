@@ -1,44 +1,112 @@
 """
-AI service for CRM module using OpenRouter (OpenAI-compatible API).
+AI service for CRM module using Google Gemini API.
 """
+from openai import OpenAI
 from app.core.config import settings
 from app.modules.crm.db_models import Lead
 
-# Try to configure OpenRouter client; fall back gracefully if unavailable
+# Try to configure Google Gemini client; fall back gracefully if unavailable
+_genai_available = False
+_genai_model = None
+_openrouter_available = False
+_openrouter_client = None
+
 try:
-    from openai import OpenAI
+    import google.generativeai as genai
 
-    _ai_client = OpenAI(
-        base_url=settings.OPENROUTER_BASE_URL,
-        api_key=settings.OPENROUTER_API_KEY,
-    )
-    _ai_available = bool(settings.OPENROUTER_API_KEY)
-    if not settings.OPENROUTER_API_KEY:
-        print("[ai_service] OPENROUTER_API_KEY is not set — AI features will use rule-based fallback")
-except (ImportError, Exception):
-    _ai_available = False
-    _ai_client = None
-    print("[ai_service] OpenRouter client could not be initialized — AI features will use rule-based fallback")
+    if settings.GEMINI_API_KEY:
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        _genai_model = genai.GenerativeModel("gemini-2.0-flash")
+        _genai_available = True
+    else:
+        print("[ai_service] GEMINI_API_KEY is not set — Gemini AI features will use fallback")
+except (ImportError, Exception) as e:
+    _genai_available = False
+    _genai_model = None
+    print(f"[ai_service] Gemini could not be initialized — Gemini fallback enabled. Error: {e}")
+
+try:
+    if settings.OPENROUTER_API_KEY:
+        _openrouter_available = True
+    else:
+        print("[ai_service] OPENROUTER_API_KEY is not set — OpenRouter AI features will use rule-based fallback")
+except Exception as e:
+    _openrouter_available = False
+    print(f"[ai_service] OpenRouter configuration check failed — fallback enabled. Error: {e}")
 
 
-AI_MODEL = "openai/gpt-4o-mini"
+def _normalize_openrouter_base_url(base_url: str) -> str:
+    url = (base_url or "").strip()
+    if url.endswith("/"):
+        url = url[:-1]
+
+    if url.startswith("https://api.openrouter.ai"):
+        url = url.replace("https://api.openrouter.ai", "https://openrouter.ai/api")
+    if url == "https://openrouter.ai/v1":
+        url = "https://openrouter.ai/api/v1"
+    return url
+
+
+def _get_openrouter_client() -> OpenAI:
+    global _openrouter_client
+    if _openrouter_client is None:
+        api_key = settings.OPENROUTER_API_KEY
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY is not configured. Set it in your .env file.")
+
+        base_url = _normalize_openrouter_base_url(settings.OPENROUTER_BASE_URL)
+        if not base_url:
+            raise ValueError("OPENROUTER_BASE_URL is not configured. Set it in your .env file.")
+
+        print(f"[ai_service] OpenRouter base_url={base_url}")
+        _openrouter_client = OpenAI(
+            base_url=base_url,
+            api_key=api_key,
+            default_headers={
+                "HTTP-Referer": "https://business-suite.local",
+                "X-Title": "Business Suite - CRM Assistant",
+            },
+        )
+    return _openrouter_client
 
 
 def _call_llm(prompt: str) -> str | None:
-    """Call OpenRouter LLM and return the raw text response, or None on failure."""
-    if not _ai_available or not _ai_client:
-        return None
-    try:
-        resp = _ai_client.chat.completions.create(
-            model=AI_MODEL,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.1,
-            max_tokens=1024,
-        )
-        return resp.choices[0].message.content.strip() or None
-    except Exception as e:
-        print(f"[ai_service] LLM call error: {e}")
-        return None
+    """Call the configured LLM and return the raw text response, or None on failure."""
+    global _genai_available
+    if _genai_available and _genai_model:
+        try:
+            resp = _genai_model.generate_content(prompt)
+            text = resp.text.strip() if resp else None
+            print(f"[ai_service] Gemini request sent. Raw response: {text!r}")
+            if text:
+                return text
+        except Exception as e:
+            err_msg = str(e)
+            print(f"[ai_service] Gemini call error ({type(e).__name__}): {err_msg}")
+            if "429" in err_msg or "quota" in err_msg.lower():
+                print("[ai_service] Gemini quota issue detected, disabling Gemini for subsequent requests.")
+                _genai_available = False
+
+    if _openrouter_available:
+        try:
+            client = _get_openrouter_client()
+            normalized_base_url = _normalize_openrouter_base_url(settings.OPENROUTER_BASE_URL)
+            print(f"[ai_service] Sending OpenRouter request to {normalized_base_url}")
+            response = client.chat.completions.create(
+                model="openai/gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=1000,
+            )
+            text = response.choices[0].message.content.strip() if response and response.choices else None
+            print(f"[ai_service] OpenRouter request sent. Raw response: {text!r}")
+            return text or None
+        except Exception as e:
+            print(f"[ai_service] OpenRouter call error ({type(e).__name__}): {e}")
+            if getattr(e, '__cause__', None):
+                print(f"[ai_service] OpenRouter root cause: {type(e.__cause__).__name__}: {e.__cause__}")
+
+    return None
 
 
 def score_lead(lead: Lead) -> tuple[int, str]:
@@ -46,8 +114,8 @@ def score_lead(lead: Lead) -> tuple[int, str]:
     Score a lead from 0–100 using AI.
     Returns (score, reason).
     """
-    if not _ai_available:
-        return 50, "AI scoring not configured (set OPENROUTER_API_KEY)"
+    if not _genai_available:
+        return 50, "AI scoring not configured (set GEMINI_API_KEY)"
 
     # Build a compact prompt from lead data
     pipeline_id = lead.pipeline_id or "none"
@@ -94,7 +162,7 @@ def suggest_assignee(
     Each candidate: { id, name, role, department, current_lead_count }
     Returns top 3 sorted by confidence.
     """
-    if not _ai_available:
+    if not _genai_available:
         return _suggest_assignee_fallback(candidates)
 
     candidate_lines = "\n".join(
@@ -172,7 +240,7 @@ def next_best_action(lead: Lead, phases: list[dict]) -> dict:
     Analyze a lead and recommend the single most impactful next action.
     Returns { action, description, suggested_phase_id, urgency }.
     """
-    if not _ai_available:
+    if not _genai_available:
         return _next_action_fallback(lead, phases)
 
     phase_map = {p["id"]: p["name"] for p in phases}
@@ -357,7 +425,7 @@ def pipeline_insights(leads: list[Lead], phases: list[dict]) -> dict:
 
     # Try AI first
     ai_result = None
-    if _ai_available:
+    if _genai_available:
         text = _call_llm(prompt)
         if text:
             import json
@@ -492,7 +560,7 @@ def crm_chatbot(
     Uses AI with full CRM context to answer questions.
     Falls back to a rule-based response if AI is unavailable.
     """
-    if not _ai_available:
+    if not (_genai_available or _openrouter_available):
         return _crm_chatbot_fallback(message)
 
     # Build a compact summary of CRM data
@@ -545,7 +613,23 @@ Assistant:"""
     text = _call_llm(prompt)
     if text:
         return text[:2000]
-    return "I'm sorry, I couldn't generate a response. Please try again later."
+
+    # Try a deterministic data-driven fallback (counts, totals, pipeline lists)
+    data_answer = _crm_chatbot_data_fallback(
+        message=message,
+        contacts=contacts,
+        leads=leads,
+        pipelines=pipelines,
+        phases=phases,
+        clients=clients,
+        activities=activities,
+        tags=tags,
+    )
+    if data_answer:
+        print("[ai_service] Data-driven fallback answered the query.")
+        return data_answer
+
+    return _crm_chatbot_fallback(message)
 
 
 def _summarize_contacts(contacts: list[dict]) -> str:
@@ -610,6 +694,74 @@ def _summarize_tags(tags: list[dict]) -> str:
         return "No tags configured."
     return ", ".join(t.get("name", "") for t in tags)
 
+
+def _crm_chatbot_data_fallback(
+    message: str,
+    contacts: list[dict],
+    leads: list[dict],
+    pipelines: list[dict],
+    phases: list[dict],
+    clients: list[dict],
+    activities: list[dict],
+    tags: list[dict],
+) -> str | None:
+    """Try to answer simple, data-driven CRM questions without AI.
+    Returns a string answer when the query can be satisfied from the provided
+    data, otherwise returns None to allow higher-level fallback.
+    """
+    q = (message or "").strip().lower()
+    # Simple count queries
+    if q.startswith("how many") or q.startswith("count") or "how many" in q:
+        # Leads
+        if "lead" in q:
+            # If user asked about a pipeline by name
+            for p in pipelines:
+                name = (p.get("name") or "").lower()
+                if name and name in q:
+                    # count leads in this pipeline
+                    pid = p.get("id")
+                    cnt = sum(1 for l in leads if (l.get("pipeline_id") or "") == pid)
+                    return f"There are {cnt} lead(s) in the '{p.get('name')}'."
+            # general leads count
+            return f"There are {len(leads)} lead(s) in the CRM."
+
+        # Contacts
+        if "contact" in q or "people" in q:
+            return f"There are {len(contacts)} contact(s) in the CRM."
+
+        # Clients
+        if "client" in q or "customer" in q:
+            return f"There are {len(clients)} client(s) in the CRM."
+
+    # Total / sum queries
+    if "total value" in q or ("value" in q and "total" in q):
+        total_value = sum((l.get("value") or 0) for l in leads)
+        return f"The total value across all leads is ${total_value:,}."
+
+    # Top / high value leads
+    if "high-value" in q or "high value" in q or "top leads" in q:
+        sorted_leads = sorted(leads, key=lambda x: x.get("value") or 0, reverse=True)
+        top = sorted_leads[:5]
+        if not top:
+            return "There are no leads in the CRM."
+        lines = [f"- {t.get('title','Untitled')} (${t.get('value',0)})" for t in top]
+        return "Top leads by value:\n" + "\n".join(lines)
+
+    # Pipeline-specific summary
+    if "pipeline" in q and ("which" in q or "list" in q or "names" in q or "what" in q):
+        if not pipelines:
+            return "No pipelines are configured."
+        return "Pipelines:\n" + "\n".join(f"- {p.get('name')}" for p in pipelines)
+
+    # Activities due / recent
+    if "activity" in q or "activities" in q or "recent activity" in q:
+        if not activities:
+            return "There are no recent activities."
+        recent = activities[:5]
+        lines = [f"- {a.get('title','Untitled')} ({a.get('activity_type','')})" for a in recent]
+        return "Recent activities:\n" + "\n".join(lines)
+
+    return None
 
 def _crm_chatbot_fallback(message: str) -> str:
     """Fallback response when AI is unavailable."""
