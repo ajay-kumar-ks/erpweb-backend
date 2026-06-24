@@ -7,7 +7,9 @@ from datetime import datetime
 from typing import List, Optional
 
 from app.core.database import get_db
-from .db_models import Contact, Tag, Activity, Lead, Pipeline, Phase, Client, PipelineAssignment
+from app.modules.auth.routers import get_current_user
+from app.modules.auth.models import User
+from .db_models import Contact, Tag, Activity, Lead, Pipeline, Phase, Client, PipelineAssignment, LogEntry
 from .schemas import (
     ContactCreateSchema,
     ContactUpdateSchema,
@@ -32,6 +34,8 @@ from .schemas import (
     ClientUpdateSchema,
     ClientSchema,
     ClientDetailSchema,
+    LogEntryCreateSchema,
+    LogEntrySchema,
     PipelineAssignmentSchema,
     PipelineAssignmentCreateSchema,
     PipelineAssignmentUpdateSchema,
@@ -235,6 +239,7 @@ async def apply_pipeline_assignment(
     pipeline_id: str,
     data: AssignToPipelineSchema,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """Apply assignment rules to existing leads in the pipeline.
     - round_robin: Distribute unassigned leads among selected members
@@ -283,9 +288,31 @@ async def apply_pipeline_assignment(
         # Assign round-robin to all existing leads in the pipeline
         idx = dept_config.get("round_robin_index", 0)
         for lead in leads_to_update:
-            lead.assignee = members[idx % len(members)]
+            old_assignee = lead.assignee
+            new_assignee = members[idx % len(members)]
+            lead.assignee = new_assignee
             idx += 1
             updated_count += 1
+            # create a log entry for this assignee change
+            try:
+                current_user_name = None
+                if current_user:
+                    current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
+                log_payload = LogEntryCreateSchema(
+                    log_type='assignee_changed',
+                    title=f"Assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
+                    description=f"Lead assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
+                    remarks=None,
+                    created_by=current_user_name,
+                    meta_data={
+                        'from_assignee': old_assignee,
+                        'to_assignee': new_assignee,
+                    },
+                )
+                _create_log_entry(db, 'lead', lead.id, log_payload)
+            except Exception:
+                # non-fatal logging error
+                pass
 
         # Update the round_robin_index in the stored config
         for dc in assignment.departments_config:
@@ -306,8 +333,27 @@ async def apply_pipeline_assignment(
         assignee_name = emp.user.full_name or emp.user.username or str(emp.id)
 
         for lead in leads_to_update:
+            old_assignee = lead.assignee
             lead.assignee = assignee_name
             updated_count += 1
+            try:
+                current_user_name = None
+                if current_user:
+                    current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
+                log_payload = LogEntryCreateSchema(
+                    log_type='assignee_changed',
+                    title=f"Assignee changed from {old_assignee or 'Unassigned'} to {assignee_name or 'Unassigned'}",
+                    description=f"Lead assignee changed from {old_assignee or 'Unassigned'} to {assignee_name or 'Unassigned'}",
+                    remarks=None,
+                    created_by=current_user_name,
+                    meta_data={
+                        'from_assignee': old_assignee,
+                        'to_assignee': assignee_name,
+                    },
+                )
+                _create_log_entry(db, 'lead', lead.id, log_payload)
+            except Exception:
+                pass
 
     else:
         raise HTTPException(status_code=400, detail=f"Unsupported assignment mode: {data.assignment_mode}")
@@ -353,6 +399,74 @@ async def create_lead(lead_data: LeadCreateSchema, db: Session = Depends(get_db)
     return lead
 
 
+def _create_log_entry(db: Session, entity_type: str, entity_id: str, log_data: LogEntryCreateSchema):
+    log_entry = LogEntry(
+        id=str(uuid.uuid4()),
+        entity_type=entity_type,
+        entity_id=entity_id,
+        log_type=log_data.log_type,
+        title=log_data.title or f"{entity_type.title()} {log_data.log_type}",
+        description=log_data.description,
+        remarks=log_data.remarks,
+        created_by=log_data.created_by,
+        meta_data=log_data.meta_data or {},
+    )
+    db.add(log_entry)
+    db.commit()
+    db.refresh(log_entry)
+    return log_entry
+
+
+@leads_router.get("/{lead_id}/logs", response_model=List[LogEntrySchema])
+async def list_lead_logs(
+    lead_id: str,
+    log_type: Optional[str] = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+    db: Session = Depends(get_db),
+):
+    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+
+    query = db.query(LogEntry).filter(LogEntry.entity_type == 'lead', LogEntry.entity_id == lead_id)
+    if log_type:
+        query = query.filter(LogEntry.log_type == log_type)
+    return query.order_by(LogEntry.created_at.desc()).limit(limit).all()
+
+
+@leads_router.post("/{lead_id}/logs", response_model=LogEntrySchema, status_code=201)
+async def create_lead_log(lead_id: str, log_data: LogEntryCreateSchema, db: Session = Depends(get_db)):
+    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    return _create_log_entry(db, 'lead', lead_id, log_data)
+
+
+@clients_router.get("/{client_id}/logs", response_model=List[LogEntrySchema])
+async def list_client_logs(
+    client_id: str,
+    log_type: Optional[str] = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+    db: Session = Depends(get_db),
+):
+    client = db.query(Client).filter(Client.id == client_id).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    query = db.query(LogEntry).filter(LogEntry.entity_type == 'client', LogEntry.entity_id == client_id)
+    if log_type:
+        query = query.filter(LogEntry.log_type == log_type)
+    return query.order_by(LogEntry.created_at.desc()).limit(limit).all()
+
+
+@clients_router.post("/{client_id}/logs", response_model=LogEntrySchema, status_code=201)
+async def create_client_log(client_id: str, log_data: LogEntryCreateSchema, db: Session = Depends(get_db)):
+    client = db.query(Client).filter(Client.id == client_id).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    return _create_log_entry(db, 'client', client_id, log_data)
+
+
 @leads_router.get("/", response_model=List[LeadSchema])
 async def list_leads(
     skip: int = Query(0, ge=0),
@@ -363,7 +477,8 @@ async def list_leads(
     source: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
     orphaned: Optional[bool] = Query(None, description="Filter leads with pipeline_id set but phase_id null"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     query = db.query(Lead).options(joinedload(Lead.contact), joinedload(Lead.pipeline), joinedload(Lead.phase))
 
@@ -381,6 +496,25 @@ async def list_leads(
     if orphaned:
         query = query.filter(Lead.pipeline_id.isnot(None), Lead.phase_id.is_(None))
 
+    # Enforce visibility: non-admins only see leads assigned to them
+    try:
+        if not getattr(current_user, 'is_admin', False):
+            filters = []
+            if getattr(current_user, 'full_name', None):
+                filters.append(Lead.assignee == current_user.full_name)
+            if getattr(current_user, 'username', None):
+                filters.append(Lead.assignee == current_user.username)
+                # allow partial matches against username
+                filters.append(Lead.assignee.ilike(f"%{current_user.username}%"))
+            if filters:
+                query = query.filter(or_(*filters))
+            else:
+                # no identifying info — return empty result set
+                query = query.filter(False)
+    except Exception:
+        # If anything goes wrong determining user visibility, default to safe behavior
+        query = query.filter(False)
+
     leads = query.offset(skip).limit(limit).all()
     return leads
 
@@ -394,16 +528,44 @@ async def get_lead(lead_id: str, db: Session = Depends(get_db)):
 
 
 @leads_router.put("/{lead_id}", response_model=LeadSchema)
-async def update_lead(lead_id: str, lead_data: LeadUpdateSchema, db: Session = Depends(get_db)):
+async def update_lead(
+    lead_id: str,
+    lead_data: LeadUpdateSchema,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     lead = db.query(Lead).filter(Lead.id == lead_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
+
     update_data = lead_data.dict(exclude_unset=True)
+    old_assignee = lead.assignee
+    new_assignee = update_data.get('assignee', old_assignee)
+
     for key, value in update_data.items():
         setattr(lead, key, value)
     db.add(lead)
     db.commit()
     db.refresh(lead)
+
+    if 'assignee' in update_data and old_assignee != new_assignee:
+        try:
+            current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
+            log_payload = LogEntryCreateSchema(
+                log_type='assignee_changed',
+                title=f"Assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
+                description=f"Lead assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
+                remarks=None,
+                created_by=current_user_name,
+                meta_data={
+                    'from_assignee': old_assignee,
+                    'to_assignee': new_assignee,
+                },
+            )
+            _create_log_entry(db, 'lead', lead.id, log_payload)
+        except Exception:
+            pass
+
     return lead
 
 
@@ -417,7 +579,7 @@ async def delete_lead(lead_id: str, db: Session = Depends(get_db)):
 
 
 @leads_router.put("/{lead_id}/move")
-async def move_lead(lead_id: str, phase_id: str = Query(...), db: Session = Depends(get_db)):
+async def move_lead(lead_id: str, phase_id: str = Query(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     lead = db.query(Lead).filter(Lead.id == lead_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
@@ -465,7 +627,48 @@ async def move_lead(lead_id: str, phase_id: str = Query(...), db: Session = Depe
 
     db.commit()
     db.refresh(lead)
-    
+    # Create a LogEntry recording the phase change with actor info and readable phase names
+    try:
+        current_user_name = None
+        if current_user:
+            current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
+
+        # Resolve readable phase names where possible
+        from_phase_name = None
+        to_phase_name = None
+        if old_phase_id:
+            old_phase = db.query(Phase).filter(Phase.id == old_phase_id).first()
+            if old_phase:
+                from_phase_name = old_phase.name
+        if destination_phase:
+            to_phase_name = destination_phase.name
+
+        title_parts = []
+        title_parts.append(from_phase_name or old_phase_id or 'None')
+        title_parts.append('→')
+        title_parts.append(to_phase_name or phase_id)
+        title = 'Moved ' + ' '.join(title_parts)
+
+        description = f"Lead moved from {from_phase_name or old_phase_id or 'None'} to {to_phase_name or phase_id}"
+
+        log_payload = LogEntryCreateSchema(
+            log_type='phase_changed',
+            title=title,
+            description=description,
+            remarks=None,
+            created_by=current_user_name,
+            meta_data={
+                "from_phase_id": old_phase_id,
+                "from_phase_name": from_phase_name,
+                "to_phase_id": phase_id,
+                "to_phase_name": to_phase_name,
+            },
+        )
+        _create_log_entry(db, 'lead', lead.id, log_payload)
+    except Exception:
+        # Logging failure should not block the move operation
+        pass
+
     response = {"success": True, "lead_id": lead.id, "phase_id": phase_id}
     if created_client_id:
         response["client_created"] = True
