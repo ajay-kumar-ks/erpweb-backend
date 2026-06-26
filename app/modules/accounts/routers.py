@@ -50,6 +50,8 @@ from app.modules.accounts.budget_schemas import BudgetCreate, BudgetRead, Budget
 from app.modules.accounts.budget_services import calculate_budget_consumption
 from app.modules.accounts.reports_services import TrialBalance, ProfitLoss, BalanceSheet
 from app.modules.accounts.reports_schemas import TrialBalanceReport, ProfitLossReport, BalanceSheetReport
+from app.modules.accounts.ai_service import get_financial_insights
+from app.modules.accounts.ai_schemas import FinancialInsightsResponse
 
 router = APIRouter()
 
@@ -577,3 +579,16 @@ def profit_loss_report(db: Session = Depends(get_db)):
 def balance_sheet_report(db: Session = Depends(get_db)):
     bs = BalanceSheet()
     return bs.generate(db)
+
+
+@router.get("/ai/insights", response_model=FinancialInsightsResponse)
+def ai_insights(db: Session = Depends(get_db)):
+    try:
+        return get_financial_insights(db)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate financial insights: {str(exc)[:200]}"
+        )

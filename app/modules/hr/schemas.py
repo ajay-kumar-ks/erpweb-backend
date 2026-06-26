@@ -48,7 +48,6 @@ class EmployeeUpdate(BaseModel):
     user_id: Optional[int] = None
     phone: Optional[str] = None
     department_id: Optional[int] = None
-    role_id: Optional[int] = None
     joining_date: Optional[date] = None
     salary: Optional[float] = None
     status: Optional[EmployeeStatus] = None
@@ -60,7 +59,6 @@ class EmployeeResponse(BaseModel):
     employee_code: str
     phone: Optional[str] = None
     department_id: Optional[int] = None
-    role_id: Optional[int] = None
     joining_date: Optional[date] = None
     salary: Optional[float] = None
     status: EmployeeStatus
@@ -70,7 +68,6 @@ class EmployeeResponse(BaseModel):
     # Joined data
     user_name: Optional[str] = None
     department_name: Optional[str] = None
-    role_name: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
@@ -78,28 +75,6 @@ class EmployeeResponse(BaseModel):
 class EmployeeListResponse(BaseModel):
     employees: list[EmployeeResponse]
     total: int
-
-
-# --- Role ---
-
-class RoleCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
-
-
-class RoleUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-
-
-class RoleResponse(BaseModel):
-    id: int
-    name: str
-    description: Optional[str] = None
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}
 
 
 # --- Department ---
@@ -171,6 +146,37 @@ class MyLeaveCreate(BaseModel):
     start_date: date
     end_date: date
     reason: Optional[str] = None
+
+
+# ── HR Chatbot Schemas ──
+
+class ChatbotMessage(BaseModel):
+    role: str = "user"  # user, assistant
+    content: str
+
+
+class ChatbotRequest(BaseModel):
+    message: str
+    history: list[ChatbotMessage] = []
+
+
+class ChatbotResponse(BaseModel):
+    reply: str
+
+
+# ── AI Job Description Generator ──
+
+class JobDescriptionRequest(BaseModel):
+    department: str
+    job_title: str
+    experience: str
+    skills: str
+    additional_requirements: str = ""
+
+
+class JobDescriptionResponse(BaseModel):
+    success: bool
+    job_description: str
 
 
 class LeaveStatusUpdate(BaseModel):

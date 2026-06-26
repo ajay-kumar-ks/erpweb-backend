@@ -11,11 +11,6 @@ from app.modules.hr.crud import (
     create_employee,
     update_employee,
     delete_employee,
-    get_roles,
-    get_role,
-    create_role,
-    update_role,
-    delete_role,
     get_departments,
     get_department,
     create_department,
@@ -44,9 +39,6 @@ from app.modules.hr.schemas import (
     EmployeeUpdate,
     EmployeeResponse,
     EmployeeListResponse,
-    RoleCreate,
-    RoleUpdate,
-    RoleResponse,
     DepartmentCreate,
     DepartmentUpdate,
     DepartmentResponse,
@@ -60,9 +52,19 @@ from app.modules.hr.schemas import (
     UserUpdate,
     UserResponse,
     MyLeaveCreate,
+    ChatbotRequest,
+    ChatbotResponse,
+    JobDescriptionRequest,
+    JobDescriptionResponse,
 )
 from app.modules.hr.services import format_employee_response, format_attendance_response, format_leave_response
-from app.modules.hr.db_models import EmployeeStatus, AttendanceStatus, LeaveType, LeaveStatus
+from app.modules.hr.db_models import (
+    EmployeeStatus, AttendanceStatus, LeaveType, LeaveStatus,
+    Employee, Department, Attendance, LeaveRequest,
+)
+from app.modules.auth.db_models import User as UserDB
+from app.modules.recruitment.db_models import Candidate
+from sqlalchemy import func
 
 router = APIRouter()
 
@@ -221,6 +223,13 @@ async def api_update_user(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
+    # Prevent self-demotion: a user cannot change their own is_admin flag
+    if user_id == current_user.id and data.is_admin is not None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You cannot change your own admin privileges. Ask another admin to modify this.",
+        )
+
     user = update_hr_user(db, user_id, data)
     if not user:
         raise HTTPException(
@@ -333,58 +342,6 @@ async def api_delete_employee(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Employee with id {employee_id} not found",
-        )
-
-
-# ──────────────────────────────────────────────
-# Role CRUD
-# ──────────────────────────────────────────────
-
-
-@router.get("/roles", response_model=list[RoleResponse])
-async def api_get_roles(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
-):
-    return get_roles(db)
-
-
-@router.post("/roles", response_model=RoleResponse, status_code=status.HTTP_201_CREATED)
-async def api_create_role(
-    data: RoleCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
-):
-    return create_role(db, data)
-
-
-@router.put("/roles/{role_id}", response_model=RoleResponse)
-async def api_update_role(
-    role_id: int,
-    data: RoleUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
-):
-    role = update_role(db, role_id, data)
-    if not role:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Role with id {role_id} not found",
-        )
-    return role
-
-
-@router.delete("/roles/{role_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def api_delete_role(
-    role_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
-):
-    deleted = delete_role(db, role_id)
-    if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Role with id {role_id} not found",
         )
 
 
@@ -524,3 +481,245 @@ async def api_update_leave_status(
             detail=f"Leave request with id {leave_id} not found",
         )
     return format_leave_response(leave)
+
+
+# ──────────────────────────────────────────────
+# AI Job Description Generator
+# ──────────────────────────────────────────────
+
+
+@router.post("/ai/job-description", response_model=JobDescriptionResponse)
+async def api_generate_job_description(
+    data: JobDescriptionRequest,
+    current_user: User = Depends(require_admin),
+):
+    """Generate a professional ATS-friendly job description using AI."""
+    try:
+        from app.services.hr_ai_service import generate_job_description
+
+        jd_text = generate_job_description(data.model_dump())
+        return JobDescriptionResponse(
+            success=True,
+            job_description=jd_text,
+        )
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"AI service configuration error: {e}",
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate job description: {str(e)[:200]}",
+        )
+
+
+# ──────────────────────────────────────────────
+# AI Insights
+# ──────────────────────────────────────────────
+
+
+@router.get("/ai-insights")
+async def api_hr_ai_insights(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
+    """Generate AI-powered HR insights from real HR data."""
+    try:
+        from app.services.hr_ai_service import generate_hr_insights
+
+        # ── Collect Workforce Data ──
+        total_employees = db.query(func.count(Employee.id)).scalar() or 0
+        total_departments = db.query(func.count(Department.id)).scalar() or 0
+        active_employees = db.query(func.count(Employee.id)).filter(
+            Employee.status == EmployeeStatus.ACTIVE
+        ).scalar() or 0
+        inactive_employees = db.query(func.count(Employee.id)).filter(
+            Employee.status == EmployeeStatus.INACTIVE
+        ).scalar() or 0
+
+        # Employees per department
+        dept_query = db.query(
+            Department.name, func.count(Employee.id)
+        ).outerjoin(
+            Employee, Employee.department_id == Department.id
+        ).group_by(Department.name).all()
+        employees_per_department = {name: count for name, count in dept_query}
+
+        # ── Collect Recruitment Data ──
+        total_candidates = db.query(func.count(Candidate.id)).scalar() or 0
+        candidates_in_progress = db.query(func.count(Candidate.id)).filter(
+            Candidate.status == "In Progress"
+        ).scalar() or 0
+        selected_candidates = db.query(func.count(Candidate.id)).filter(
+            Candidate.current_stage == "Selected"
+        ).scalar() or 0
+        onboarded_candidates = db.query(func.count(Candidate.id)).filter(
+            Candidate.current_stage == "Onboarded"
+        ).scalar() or 0
+        converted_employees = db.query(func.count(Candidate.id)).filter(
+            Candidate.converted_to_employee == True
+        ).scalar() or 0
+        rejected_candidates = db.query(func.count(Candidate.id)).filter(
+            Candidate.current_stage == "Rejected"
+        ).scalar() or 0
+
+        # ── Collect Attendance Data ──
+        total_attendance_records = db.query(func.count(Attendance.id)).scalar() or 0
+        present_employees = db.query(func.count(Attendance.id)).filter(
+            Attendance.status == AttendanceStatus.PRESENT
+        ).scalar() or 0
+        absent_employees = db.query(func.count(Attendance.id)).filter(
+            Attendance.status == AttendanceStatus.ABSENT
+        ).scalar() or 0
+        attendance_percentage = (
+            (present_employees / total_attendance_records * 100)
+            if total_attendance_records > 0 else 0
+        )
+
+        # ── Collect Leave Data ──
+        total_leave_requests = db.query(func.count(LeaveRequest.id)).scalar() or 0
+        approved_leaves = db.query(func.count(LeaveRequest.id)).filter(
+            LeaveRequest.status == LeaveStatus.APPROVED
+        ).scalar() or 0
+        pending_leaves = db.query(func.count(LeaveRequest.id)).filter(
+            LeaveRequest.status == LeaveStatus.PENDING
+        ).scalar() or 0
+        rejected_leaves = db.query(func.count(LeaveRequest.id)).filter(
+            LeaveRequest.status == LeaveStatus.REJECTED
+        ).scalar() or 0
+
+        # ── Build HR data dict ──
+        hr_data = {
+            "total_employees": total_employees,
+            "total_departments": total_departments,
+            "active_employees": active_employees,
+            "inactive_employees": inactive_employees,
+            "employees_per_department": employees_per_department,
+            "total_candidates": total_candidates,
+            "candidates_in_progress": candidates_in_progress,
+            "selected_candidates": selected_candidates,
+            "onboarded_candidates": onboarded_candidates,
+            "converted_employees": converted_employees,
+            "rejected_candidates": rejected_candidates,
+            "total_attendance_records": total_attendance_records,
+            "present_employees": present_employees,
+            "absent_employees": absent_employees,
+            "attendance_percentage": round(attendance_percentage, 1),
+            "total_leave_requests": total_leave_requests,
+            "approved_leaves": approved_leaves,
+            "pending_leaves": pending_leaves,
+            "rejected_leaves": rejected_leaves,
+        }
+
+        # ── Generate AI insights ──
+        insights = generate_hr_insights(hr_data)
+        return {
+            "success": True,
+            "data": hr_data,
+            "insights": insights,
+        }
+
+    except ImportError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="AI service module not available. Check your backend installation.",
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"AI service configuration error: {e}",
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate AI insights: {str(e)[:200]}",
+        )
+
+
+# ──────────────────────────────────────────────
+# HR Chatbot (conversational AI)
+# ──────────────────────────────────────────────
+
+
+@router.post("/ai/chat")
+async def api_hr_chatbot(
+    data: ChatbotRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
+    """
+    HR Chatbot: Answers user questions about HR data.
+    Uses AI with full HR context to provide intelligent responses.
+    Only answers questions related to HR content.
+    """
+    # Fetch all HR data
+    employees = db.query(Employee).all()
+    departments = db.query(Department).all()
+    attendance_records = db.query(Attendance).order_by(Attendance.date.desc()).limit(100).all()
+    leaves = db.query(LeaveRequest).order_by(LeaveRequest.created_at.desc()).limit(100).all()
+    candidates = db.query(Candidate).all()
+    users = db.query(UserDB).all()
+
+    # Convert to dicts for the AI service
+    from app.modules.hr.services import format_employee_response, format_attendance_response, format_leave_response
+
+    employees_data = []
+    for emp in employees:
+        d = format_employee_response(emp)
+        employees_data.append(d)
+
+    departments_data = []
+    for dept in departments:
+        d = {
+            "id": dept.id,
+            "name": dept.name,
+            "description": dept.description,
+        }
+        departments_data.append(d)
+
+    attendance_data = [format_attendance_response(r) for r in attendance_records]
+
+    leaves_data = [format_leave_response(l) for l in leaves]
+
+    candidates_data = []
+    for c in candidates:
+        d = {
+            "id": c.id,
+            "full_name": c.full_name,
+            "email": c.email,
+            "department_name": c.department.name if c.department else None,
+            "current_stage": c.current_stage,
+            "status": c.status,
+            "experience_years": c.experience_years,
+        }
+        candidates_data.append(d)
+
+    users_data = []
+    for u in users:
+        d = {
+            "id": u.id,
+            "username": u.username,
+            "email": u.email,
+            "full_name": u.full_name,
+            "is_admin": u.is_admin,
+        }
+        users_data.append(d)
+
+    from app.modules.hr.hr_chatbot_service import hr_chatbot as ai_chat
+
+    history = [{"role": m.role, "content": m.content} for m in data.history]
+
+    reply = ai_chat(
+        message=data.message,
+        history=history,
+        employees=employees_data,
+        departments=departments_data,
+        attendance_records=attendance_data,
+        leaves=leaves_data,
+        candidates=candidates_data,
+        users=users_data,
+    )
+
+    return ChatbotResponse(reply=reply)

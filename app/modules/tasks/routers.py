@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
-from sqlalchemy import func, cast, Date
+from sqlalchemy import func, cast, Date, extract
 from sqlalchemy.orm import Session, joinedload
 from app.core.database import get_db
 from app.core.event_bus import event_bus
@@ -25,6 +25,7 @@ from app.modules.tasks.schemas import (
     Priority, Status,
 )
 from app.modules.tasks.db_models import Task, TaskActivity, TaskDependency, SubTask
+from app.modules.tasks.db_models import Status as DBStatus, Priority as DBPriority
 
 # Define the status progression order (higher = later in workflow)
 STATUS_ORDER = {
@@ -100,7 +101,7 @@ async def list_employees(
         query = (
             db.query(Employee)
             .join(UserDB, Employee.user_id == UserDB.id)
-            .options(joinedload(Employee.user), joinedload(Employee.department), joinedload(Employee.role))
+            .options(joinedload(Employee.user), joinedload(Employee.department))
             .filter(Employee.status == EmployeeStatus.ACTIVE)
         )
 
@@ -120,8 +121,8 @@ async def list_employees(
                 "email": emp.user.email if emp.user else None,
                 "department": emp.department.name if emp.department else None,
                 "department_id": emp.department_id,
-                "designation": emp.role.name if emp.role else None,
-                "role_id": emp.role_id,
+                "designation": None,
+                "role_id": None,
                 "status": emp.status.value if emp.status else None,
             }
             for emp in employees
@@ -1012,24 +1013,20 @@ async def analytics_summary(
             return _
 
         total = query.count()
-        completed = query.filter(Task.status == Status.COMPLETED).count()
-        overdue = query.filter(Task.status == Status.OVERDUE).count()
-        in_progress = query.filter(Task.status == Status.ON_PROGRESS).count()
-        on_hold = query.filter(Task.status == Status.ON_HOLD).count()
-        on_review = query.filter(Task.status == Status.ON_REVIEW).count()
-        pending = query.filter(Task.status == Status.TODO).count()
+        completed = query.filter(Task.status == DBStatus.COMPLETED).count()
+        overdue = query.filter(Task.status == DBStatus.OVERDUE).count()
+        in_progress = query.filter(Task.status == DBStatus.ON_PROGRESS).count()
+        on_hold = query.filter(Task.status == DBStatus.ON_HOLD).count()
+        on_review = query.filter(Task.status == DBStatus.ON_REVIEW).count()
+        pending = query.filter(Task.status == DBStatus.TODO).count()
 
         completion_rate = round((completed / total * 100), 1) if total > 0 else 0.0
 
         # Average completion time (in hours)
-        avg_time = db.query(
-            func.avg(
-                func.extract('epoch', Task.updated_at - Task.created_at) / 3600
-            )
-        ).filter(
-            Task.status == Status.COMPLETED,
-            Task.updated_at.isnot(None),
-            Task.created_at.isnot(None),
+        avg_time = query.filter(
+            Task.status == DBStatus.COMPLETED,
+        ).with_entities(
+            func.avg(extract('epoch', Task.updated_at - Task.created_at) / 3600)
         ).scalar()
         avg_completion_time = round(float(avg_time), 1) if avg_time else 0.0
 
@@ -1042,7 +1039,7 @@ async def analytics_summary(
         ).count()
 
         completed_today = query.filter(
-            Task.status == Status.COMPLETED,
+            Task.status == DBStatus.COMPLETED,
             Task.updated_at >= today_start,
             Task.updated_at < today_end,
         ).count()
@@ -1099,13 +1096,13 @@ async def analytics_completion_trend(
             ).count()
 
             completed = base_query.filter(
-                Task.status == Status.COMPLETED,
+                Task.status == DBStatus.COMPLETED,
                 Task.updated_at >= day_start,
                 Task.updated_at < day_end,
             ).count()
 
             overdue = base_query.filter(
-                Task.status == Status.OVERDUE,
+                Task.status == DBStatus.OVERDUE,
                 Task.updated_at >= day_start,
                 Task.updated_at < day_end,
             ).count()
@@ -1138,11 +1135,11 @@ async def analytics_status_distribution(
             if employee_id:
                 query = query.filter(Task.assignee_id == employee_id)
             else:
-                return {s.value: 0 for s in Status}
+                return {s.value: 0 for s in DBStatus}
 
         rows = query.group_by(Task.status).all()
 
-        result = {s.value: 0 for s in Status}
+        result = {s.value: 0 for s in DBStatus}
         for status_val, count in rows:
             result[status_val.value] = count
         return result
@@ -1164,11 +1161,11 @@ async def analytics_priority_distribution(
             if employee_id:
                 query = query.filter(Task.assignee_id == employee_id)
             else:
-                return {p.value: 0 for p in Priority}
+                return {p.value: 0 for p in DBPriority}
 
         rows = query.group_by(Task.priority).all()
 
-        result = {p.value: 0 for p in Priority}
+        result = {p.value: 0 for p in DBPriority}
         for priority_val, count in rows:
             result[priority_val.value] = count
         return result
@@ -1193,7 +1190,7 @@ async def analytics_team_workload(
                 return []
 
             emp = db.query(Employee).options(
-                joinedload(Employee.user), joinedload(Employee.department), joinedload(Employee.role)
+                joinedload(Employee.user), joinedload(Employee.department)
             ).filter(Employee.id == employee_id).first()
             if not emp:
                 return []
@@ -1212,7 +1209,7 @@ async def analytics_team_workload(
             return [workload]
 
         employees = db.query(Employee).options(
-            joinedload(Employee.user), joinedload(Employee.department), joinedload(Employee.role)
+            joinedload(Employee.user), joinedload(Employee.department)
         ).all()
 
         result = []

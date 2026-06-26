@@ -46,30 +46,6 @@ class ActivitySchema(ActivityBaseSchema):
         from_attributes = True
 
 
-class LogEntryBaseSchema(BaseModel):
-    log_type: str
-    title: Optional[str] = None
-    description: Optional[str] = None
-    remarks: Optional[str] = None
-    created_by: Optional[str] = None
-    meta_data: Optional[dict] = {}
-
-
-class LogEntryCreateSchema(LogEntryBaseSchema):
-    pass
-
-
-class LogEntrySchema(LogEntryBaseSchema):
-    id: str
-    entity_type: str
-    entity_id: str
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
 # Contact Schemas
 class ContactBaseSchema(BaseModel):
     name: str

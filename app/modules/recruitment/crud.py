@@ -5,11 +5,14 @@ from app.modules.recruitment.db_models import (
     Candidate,
     PipelineTemplate,
     can_move_to_stage,
-    DEFAULT_PIPELINES,
+    DEFAULT_PIPELINE_STAGES,
 )
 from app.modules.recruitment.schemas import CandidateCreate, CandidateUpdate
-from app.modules.hr.db_models import Role, Employee, EmployeeStatus
-from app.modules.hr.crud import generate_employee_code, get_role
+from app.modules.hr.db_models import Employee, EmployeeStatus
+from app.modules.hr.crud import generate_employee_code
+from app.modules.auth.db_models import User
+from app.modules.auth.utils import get_password_hash
+from datetime import date
 
 
 # ──────────────────────────────────────────────
@@ -25,24 +28,16 @@ def get_pipeline_template(db: Session, template_id: int) -> PipelineTemplate | N
     return db.query(PipelineTemplate).filter(PipelineTemplate.id == template_id).first()
 
 
-def get_pipeline_template_by_role(db: Session, role_id: int) -> PipelineTemplate | None:
-    return db.query(PipelineTemplate).filter(PipelineTemplate.role_id == role_id).first()
+def get_pipeline_template_by_department(db: Session, department_id: int) -> PipelineTemplate | None:
+    return db.query(PipelineTemplate).filter(PipelineTemplate.department_id == department_id).first()
 
 
 def create_pipeline_template(db: Session, data) -> PipelineTemplate:
-    existing = get_pipeline_template_by_role(db, data.role_id)
+    existing = get_pipeline_template_by_department(db, data.department_id)
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Pipeline template already exists for role_id {data.role_id}",
-        )
-
-    # Validate role exists
-    role = get_role(db, data.role_id)
-    if not role:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Role with id {data.role_id} not found",
+            detail=f"Pipeline template already exists for department_id {data.department_id}",
         )
 
     # Validate stages — must have at least 2 stages, end with Onboarded, start with Applied
@@ -63,7 +58,7 @@ def create_pipeline_template(db: Session, data) -> PipelineTemplate:
         )
 
     template = PipelineTemplate(
-        role_id=data.role_id,
+        department_id=data.department_id,
         stages=data.stages,
     )
     db.add(template)
@@ -109,30 +104,18 @@ def delete_pipeline_template(db: Session, template_id: int) -> bool:
     return True
 
 
-def get_default_stages_for_role(role_name: str) -> list[str]:
-    """Get default pipeline stages based on role name hint."""
-    # Check exact match first
-    if role_name in DEFAULT_PIPELINES:
-        return list(DEFAULT_PIPELINES[role_name])
-    # Check partial match
-    for key, stages in DEFAULT_PIPELINES.items():
-        if key.lower() in role_name.lower() or role_name.lower() in key.lower():
-            return list(stages)
-    return list(DEFAULT_PIPELINES["default"])
-
-
 def seed_default_pipeline_templates(db: Session):
-    """Auto-create pipeline templates for roles that don't have one yet."""
-    roles = db.query(Role).all()
+    """Auto-create pipeline templates for departments that don't have one yet."""
+    from app.modules.hr.db_models import Department
+    departments = db.query(Department).all()
     created = 0
-    for role in roles:
-        existing = get_pipeline_template_by_role(db, role.id)
+    for dept in departments:
+        existing = get_pipeline_template_by_department(db, dept.id)
         if existing:
             continue
-        stages = get_default_stages_for_role(role.name)
         template = PipelineTemplate(
-            role_id=role.id,
-            stages=stages,
+            department_id=dept.id,
+            stages=list(DEFAULT_PIPELINE_STAGES),
         )
         db.add(template)
         created += 1
@@ -162,41 +145,33 @@ def create_candidate(db: Session, data: CandidateCreate) -> Candidate:
             detail=f"Candidate with email '{data.email}' already exists",
         )
 
-    # Determine position and pipeline
-    position = data.position_applied
-    pipeline_stages = None
+    # Department is required; validate that it has a pipeline template
+    if not data.department_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Department is required to create a candidate.",
+        )
 
-    if data.role_id:
-        role = get_role(db, data.role_id)
-        if not role:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Role with id {data.role_id} not found",
-            )
-        if not position:
-            position = role.name
+    template = get_pipeline_template_by_department(db, data.department_id)
+    if not template:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Please configure a pipeline template for this department before adding candidates.",
+        )
 
-        # Get pipeline template for this role
-        template = get_pipeline_template_by_role(db, data.role_id)
-        if template:
-            pipeline_stages = list(template.stages)
-
-    # If no role or no template, use default pipeline
-    if not pipeline_stages:
-        pipeline_stages = list(DEFAULT_PIPELINES["default"])
+    pipeline_stages = list(template.stages)
 
     candidate = Candidate(
         full_name=data.full_name,
         email=data.email,
         phone=data.phone,
-        position_applied=position or "Unknown",
-        role_id=data.role_id,
+        department_id=data.department_id,
         experience_years=data.experience_years,
         notes=data.notes,
         resume_url=data.resume_url,
-        current_stage=pipeline_stages[0] if pipeline_stages else "Applied",
+        current_stage=pipeline_stages[0],
         pipeline_stages=pipeline_stages,
-        status="active",
+        status="In Progress",
         converted_to_employee=False,
     )
     db.add(candidate)
@@ -221,10 +196,10 @@ def update_candidate(db: Session, candidate_id: int, data: CandidateUpdate) -> C
                 detail=f"Candidate with email '{update_data['email']}' already exists",
             )
 
-    # If role_id changed, update pipeline stages
-    if "role_id" in update_data and update_data["role_id"] != candidate.role_id:
-        if update_data["role_id"]:
-            template = get_pipeline_template_by_role(db, update_data["role_id"])
+    # If department_id changed, update pipeline stages
+    if "department_id" in update_data and update_data["department_id"] != candidate.department_id:
+        if update_data["department_id"]:
+            template = get_pipeline_template_by_department(db, update_data["department_id"])
             if template:
                 update_data["pipeline_stages"] = list(template.stages)
 
@@ -275,58 +250,68 @@ def move_candidate_stage(db: Session, candidate_id: int, target_stage: str) -> C
 
     db.commit()
     db.refresh(candidate)
+
     return candidate
 
 
-# ──────────────────────────────────────────────
-# Convert to Employee (from Onboarded stage only)
-# ──────────────────────────────────────────────
 
-
-def convert_candidate_to_employee(
-    db: Session,
-    candidate_id: int,
-    data,
-) -> dict:
+def convert_candidate_to_employee(db: Session, candidate_id: int, username: str, password: str) -> Candidate | None:
     """
-    Convert an Onboarded candidate into an Employee record.
-    Does NOT create a User account — that's a separate process.
+    Manually convert an Onboarded candidate to an Employee.
+    Creates a User (login account) with the provided username/password.
     """
     candidate = db.query(Candidate).filter(Candidate.id == candidate_id).first()
     if not candidate:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Candidate with id {candidate_id} not found",
-        )
+        return None
 
     if candidate.current_stage != "Onboarded":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Candidate is in '{candidate.current_stage}' stage. Only 'Onboarded' candidates can be converted.",
+            detail="Candidate must be in 'Onboarded' stage to convert to employee.",
         )
 
     if candidate.converted_to_employee:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Candidate has already been converted to an employee",
+            detail="Candidate has already been converted to an employee.",
         )
 
-    # Create employee record (no user account)
-    employee_code = data.employee_code or generate_employee_code(db)
+    # Validate username uniqueness
+    existing_user = db.query(User).filter(User.username == username).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Username '{username}' is already taken. Please choose a different username.",
+        )
 
+    # 1. Create User account with provided credentials
+    user = User(
+        username=username,
+        email=candidate.email or "",
+        full_name=candidate.full_name,
+        hashed_password=get_password_hash(password),
+        disabled=False,
+        is_admin=False,
+    )
+    db.add(user)
+    db.flush()  # Get user.id before creating employee
+
+    # 2. Create Employee linked to user
+    employee_code = generate_employee_code(db)
     employee = Employee(
-        user_id=None,  # No user account — will be assigned later
+        user_id=user.id,
         employee_code=employee_code,
-        phone=data.phone or candidate.phone,
-        department_id=data.department_id,
-        role_id=data.role_id or candidate.role_id,
-        joining_date=data.joining_date,
-        salary=data.salary,
+        full_name=candidate.full_name,
+        email=candidate.email,
+        phone=candidate.phone,
+        department_id=candidate.department_id,
+        joining_date=date.today(),
+        salary=None,
         status=EmployeeStatus.ACTIVE,
     )
     db.add(employee)
 
-    # Mark candidate as converted
+    # 3. Mark candidate as converted
     candidate.converted_to_employee = True
     candidate.status = "converted"
 
@@ -334,26 +319,7 @@ def convert_candidate_to_employee(
     db.refresh(employee)
     db.refresh(candidate)
 
-    return {
-        "employee": {
-            "id": employee.id,
-            "employee_code": employee.employee_code,
-            "full_name": candidate.full_name,
-            "email": candidate.email,
-            "status": employee.status.value if employee.status else None,
-        },
-        "candidate": {
-            "id": candidate.id,
-            "full_name": candidate.full_name,
-            "current_stage": candidate.current_stage,
-            "converted_to_employee": candidate.converted_to_employee,
-            "status": candidate.status,
-        },
-        "message": (
-            f"Candidate '{candidate.full_name}' converted to employee (Code: {employee_code}). "
-            f"A user account can be created separately in User Management."
-        ),
-    }
+    return candidate
 
 
 # ──────────────────────────────────────────────
@@ -365,10 +331,10 @@ def get_recruitment_stats(db: Session) -> dict:
     total = db.query(func.count(Candidate.id)).scalar() or 0
 
     in_progress = db.query(func.count(Candidate.id)).filter(
-        Candidate.status == "active"
+        Candidate.status == "In Progress"
     ).scalar() or 0
 
-    # Selected = candidates in 'Selected' stage (or the stage before Onboarded)
+    # Selected = candidates in 'Selected' stage
     selected = db.query(func.count(Candidate.id)).filter(
         Candidate.current_stage == "Selected"
     ).scalar() or 0
@@ -395,17 +361,19 @@ def get_recruitment_stats(db: Session) -> dict:
     }
 
 
-def get_candidates_by_position(db: Session) -> list[dict]:
+def get_candidates_by_department(db: Session) -> list[dict]:
+    from app.modules.hr.db_models import Department
     rows = (
         db.query(
-            Candidate.position_applied,
+            Department.name,
             func.count(Candidate.id).label("count"),
         )
-        .group_by(Candidate.position_applied)
+        .join(Candidate, Candidate.department_id == Department.id, isouter=True)
+        .group_by(Department.name)
         .order_by(func.count(Candidate.id).desc())
         .all()
     )
-    return [{"position": row.position_applied, "count": row.count} for row in rows]
+    return [{"department": row.name, "count": row.count} for row in rows]
 
 
 def get_candidates_by_stage(db: Session) -> list[dict]:

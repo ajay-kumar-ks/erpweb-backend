@@ -4,25 +4,25 @@ from app.core.base import BaseModel
 
 
 # ──────────────────────────────────────────────
-# Pipeline Template — configurable stages per Role
+# Pipeline Template — configurable stages per Department
 # ──────────────────────────────────────────────
 
 class PipelineTemplate(BaseModel):
     """
-    Each Role can have one pipeline template defining its recruitment stages.
+    Each Department can have one pipeline template defining its recruitment stages.
     Stages are stored as an ordered JSON array of strings, e.g.:
     ["Applied", "Screening", "Technical Test", "Technical Interview", "HR Interview", "Selected", "Onboarded"]
     """
     __tablename__ = "pipeline_templates"
 
     id = Column(Integer, primary_key=True, index=True)
-    role_id = Column(Integer, ForeignKey("roles.id"), unique=True, nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"), unique=True, nullable=False)
     stages = Column(JSON, nullable=False)  # ordered list of stage names
 
-    role = relationship("Role")
+    department = relationship("Department")
 
     def __repr__(self):
-        return f"<PipelineTemplate(id={self.id}, role_id={self.role_id}, stages={len(self.stages)})>"
+        return f"<PipelineTemplate(id={self.id}, department_id={self.department_id}, stages={len(self.stages)})>"
 
 
 # ──────────────────────────────────────────────
@@ -37,11 +37,8 @@ class Candidate(BaseModel):
     email = Column(String(255), nullable=False)
     phone = Column(String(50), nullable=True)
 
-    # The position/role applied for
-    position_applied = Column(String(255), nullable=False)
-
-    # FK to Role (optional, for pipeline lookup)
-    role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
+    # FK to Department (the department the candidate applied for)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
 
     experience_years = Column(Float, default=0, nullable=False)
 
@@ -57,7 +54,7 @@ class Candidate(BaseModel):
     resume_url = Column(String(500), nullable=True)
     notes = Column(Text, nullable=True)
 
-    role = relationship("Role")
+    department = relationship("Department")
 
     def __repr__(self):
         return f"<Candidate(id={self.id}, name={self.full_name}, stage={self.current_stage})>"
@@ -108,49 +105,14 @@ def is_final_pipeline_stage(candidate: Candidate) -> bool:
 
 
 # ──────────────────────────────────────────────
-# Default pipeline templates by role name hint
+# Default pipeline template
 # ──────────────────────────────────────────────
 
-DEFAULT_PIPELINES = {
-    "Software Developer": [
-        "Applied",
-        "Screening",
-        "Technical Test",
-        "Technical Interview",
-        "HR Interview",
-        "Selected",
-        "Onboarded",
-    ],
-    "UI/UX Designer": [
-        "Applied",
-        "Portfolio Review",
-        "Design Assignment",
-        "Design Interview",
-        "HR Interview",
-        "Selected",
-        "Onboarded",
-    ],
-    "Support Agent": [
-        "Applied",
-        "Screening",
-        "Communication Test",
-        "HR Interview",
-        "Selected",
-        "Onboarded",
-    ],
-    "HR Executive": [
-        "Applied",
-        "Screening",
-        "HR Manager Interview",
-        "Selected",
-        "Onboarded",
-    ],
-    "default": [
-        "Applied",
-        "Screening",
-        "Interview",
-        "HR Interview",
-        "Selected",
-        "Onboarded",
-    ],
-}
+DEFAULT_PIPELINE_STAGES = [
+    "Applied",
+    "Screening",
+    "Interview",
+    "HR Interview",
+    "Selected",
+    "Onboarded",
+]

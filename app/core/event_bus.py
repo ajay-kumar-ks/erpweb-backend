@@ -15,7 +15,9 @@ class EventBus:
         print("EventBus disconnected")
 
     def subscribe(self, event_name: str, handler: Callable[[Any], None]) -> None:
-        self.subscribers.setdefault(event_name, []).append(handler)
+        handlers = self.subscribers.setdefault(event_name, [])
+        if handler not in handlers:
+            handlers.append(handler)
 
     def publish(self, event_name: str, payload: Any) -> None:
         for handler in self.subscribers.get(event_name, []):

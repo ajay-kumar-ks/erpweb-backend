@@ -10,7 +10,6 @@ def format_employee_response(employee: Employee) -> dict:
         "employee_code": employee.employee_code,
         "phone": employee.phone,
         "department_id": employee.department_id,
-        "role_id": employee.role_id,
         "joining_date": employee.joining_date.isoformat() if employee.joining_date else None,
         "salary": employee.salary,
         "status": employee.status.value if employee.status else None,
@@ -18,7 +17,6 @@ def format_employee_response(employee: Employee) -> dict:
         "updated_at": employee.updated_at.isoformat() if employee.updated_at else None,
         "user_name": employee.user.full_name if employee.user else None,
         "department_name": employee.department.name if employee.department else None,
-        "role_name": employee.role.name if employee.role else None,
     }
     return result
 

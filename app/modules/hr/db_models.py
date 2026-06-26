@@ -17,8 +17,6 @@ class Role(BaseModel):
     name = Column(String(255), unique=True, nullable=False)
     description = Column(String(500), nullable=True)
 
-    employees = relationship("Employee", back_populates="role")
-
     def __repr__(self):
         return f"<Role(id={self.id}, name={self.name})>"
 
@@ -102,11 +100,12 @@ class Employee(BaseModel):
     __tablename__ = "employees"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("auth_users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("auth_users.id"), nullable=True)
     employee_code = Column(String(50), unique=True, nullable=False)
+    full_name = Column(String(255), nullable=True)  # For candidates converted without a user account
+    email = Column(String(255), nullable=True)  # For candidates converted without a user account
     phone = Column(String(50), nullable=True)
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
-    role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
     joining_date = Column(Date, nullable=True)
     salary = Column(Float, nullable=True)
     status = Column(
@@ -116,7 +115,6 @@ class Employee(BaseModel):
     )
 
     user = relationship("User")
-    role = relationship("Role", back_populates="employees")
     department = relationship("Department", back_populates="employees")
 
     def __repr__(self):

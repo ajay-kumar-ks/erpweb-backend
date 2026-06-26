@@ -8,7 +8,7 @@ from datetime import datetime
 # ──────────────────────────────────────────────
 
 class PipelineTemplateCreate(BaseModel):
-    role_id: int
+    department_id: int
     stages: list[str]
 
 
@@ -18,9 +18,9 @@ class PipelineTemplateUpdate(BaseModel):
 
 class PipelineTemplateResponse(BaseModel):
     id: int
-    role_id: int
+    department_id: int
     stages: list[str]
-    role_name: Optional[str] = None
+    department_name: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
@@ -35,8 +35,7 @@ class CandidateCreate(BaseModel):
     full_name: str
     email: str
     phone: Optional[str] = None
-    position_applied: Optional[str] = None  # auto-set from role if not provided
-    role_id: Optional[int] = None           # if provided, pipeline is auto-assigned
+    department_id: int  # Required — pipeline stages are determined from the department
     experience_years: float = 0
     notes: Optional[str] = None
     resume_url: Optional[str] = None
@@ -46,8 +45,7 @@ class CandidateUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
-    position_applied: Optional[str] = None
-    role_id: Optional[int] = None
+    department_id: Optional[int] = None
     experience_years: Optional[float] = None
     notes: Optional[str] = None
     resume_url: Optional[str] = None
@@ -58,9 +56,8 @@ class CandidateResponse(BaseModel):
     full_name: str
     email: str
     phone: Optional[str] = None
-    position_applied: str
-    role_id: Optional[int] = None
-    role_name: Optional[str] = None
+    department_id: Optional[int] = None
+    department_name: Optional[str] = None
     experience_years: float
     current_stage: str
     pipeline_stages: Optional[list[str]] = None
@@ -79,9 +76,5 @@ class MoveStageRequest(BaseModel):
 
 
 class ConvertToEmployeeRequest(BaseModel):
-    department_id: Optional[int] = None
-    role_id: Optional[int] = None
-    employee_code: Optional[str] = None
-    phone: Optional[str] = None
-    joining_date: Optional[str] = None
-    salary: Optional[float] = None
+    username: str
+    password: str

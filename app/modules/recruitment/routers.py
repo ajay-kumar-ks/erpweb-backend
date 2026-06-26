@@ -23,7 +23,7 @@ from app.modules.recruitment.crud import (
     move_candidate_stage,
     convert_candidate_to_employee,
     get_recruitment_stats,
-    get_candidates_by_position,
+    get_candidates_by_department,
     get_candidates_by_stage,
     get_hiring_stats,
     get_pipeline_templates,
@@ -77,9 +77,9 @@ async def api_get_pipeline_templates(
     for t in templates:
         result.append({
             "id": t.id,
-            "role_id": t.role_id,
+            "department_id": t.department_id,
             "stages": t.stages,
-            "role_name": t.role.name if t.role else None,
+            "department_name": t.department.name if t.department else None,
             "created_at": t.created_at,
             "updated_at": t.updated_at,
         })
@@ -100,9 +100,9 @@ async def api_get_pipeline_template(
         )
     return {
         "id": template.id,
-        "role_id": template.role_id,
+        "department_id": template.department_id,
         "stages": template.stages,
-        "role_name": template.role.name if template.role else None,
+        "department_name": template.department.name if template.department else None,
         "created_at": template.created_at,
         "updated_at": template.updated_at,
     }
@@ -117,9 +117,9 @@ async def api_create_pipeline_template(
     template = create_pipeline_template(db, data)
     return {
         "id": template.id,
-        "role_id": template.role_id,
+        "department_id": template.department_id,
         "stages": template.stages,
-        "role_name": template.role.name if template.role else None,
+        "department_name": template.department.name if template.department else None,
         "created_at": template.created_at,
         "updated_at": template.updated_at,
     }
@@ -140,9 +140,9 @@ async def api_update_pipeline_template(
         )
     return {
         "id": template.id,
-        "role_id": template.role_id,
+        "department_id": template.department_id,
         "stages": template.stages,
-        "role_name": template.role.name if template.role else None,
+        "department_name": template.department.name if template.department else None,
         "created_at": template.created_at,
         "updated_at": template.updated_at,
     }
@@ -167,7 +167,7 @@ async def api_seed_pipeline_templates(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
-    """Auto-create pipeline templates for roles that don't have one yet."""
+    """Auto-create pipeline templates for departments that don't have one yet."""
     created = seed_default_pipeline_templates(db)
     return {"message": f"Created {created} pipeline template(s)", "created": created}
 
@@ -264,19 +264,31 @@ async def api_move_candidate_stage(
 
 
 # ──────────────────────────────────────────────
-# Convert to Employee (from Onboarded)
+# Employee Conversion
 # ──────────────────────────────────────────────
 
 
-@router.post("/candidates/{candidate_id}/convert-to-employee")
-async def api_convert_to_employee(
+@router.post("/candidates/{candidate_id}/convert")
+async def api_convert_candidate_to_employee(
     candidate_id: int,
     data: ConvertToEmployeeRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
-    result = convert_candidate_to_employee(db, candidate_id, data)
-    return result
+    """Convert an Onboarded candidate to an Employee record and create a login account."""
+    candidate = convert_candidate_to_employee(db, candidate_id, data.username, data.password)
+    if not candidate:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Candidate with id {candidate_id} not found",
+        )
+    return {
+        "candidate": format_candidate_response(candidate),
+        "credentials": {
+            "username": data.username,
+            "email": candidate.email,
+        },
+    }
 
 
 # ──────────────────────────────────────────────
@@ -290,12 +302,12 @@ async def api_recruitment_dashboard(
     current_user: User = Depends(require_admin),
 ):
     stats = get_recruitment_stats(db)
-    by_position = get_candidates_by_position(db)
+    by_department = get_candidates_by_department(db)
     by_stage = get_candidates_by_stage(db)
     hiring = get_hiring_stats(db)
     return {
         **stats,
-        "by_position": by_position,
+        "by_department": by_department,
         "by_stage": by_stage,
         "hiring": hiring,
     }

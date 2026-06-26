@@ -11,6 +11,7 @@ DEFAULT_COA_ENTRIES = [
     {"account_code": "1100", "account_name": "Bank", "account_type": "Asset"},
     {"account_code": "1200", "account_name": "Accounts Receivable", "account_type": "Asset"},
     {"account_code": "2000", "account_name": "Accounts Payable", "account_type": "Liability"},
+    {"account_code": "2100", "account_name": "Salary Payable", "account_type": "Liability"},
     {"account_code": "3000", "account_name": "Capital", "account_type": "Equity"},
     {"account_code": "4000", "account_name": "Revenue", "account_type": "Revenue"},
     {"account_code": "5000", "account_name": "Expenses", "account_type": "Expense"},

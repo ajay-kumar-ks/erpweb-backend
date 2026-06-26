@@ -7,6 +7,28 @@ from app.modules.auth.db_models import User
 from app.modules.auth.utils import get_password_hash
 from app.modules.hr.schemas import EmployeeCreate, EmployeeUpdate, AttendanceCreate, LeaveCreate, LeaveStatusUpdate, UserCreate
 
+def _publish_salary_event(employee: Employee) -> None:
+    """Publish salary.processed event so Accounts can create proper accrual journal entry."""
+    if employee.salary is None:
+        return
+    from datetime import datetime
+    from app.core.event_bus import event_bus
+    try:
+        event_bus.publish(
+            "salary.processed",
+            {
+                "employee_id": employee.id,
+                "employee_code": employee.employee_code,
+                "amount": float(employee.salary),
+                "reference": f"SAL-{employee.employee_code}-{employee.id}",
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+    except Exception as exc:
+        # Log but don't fail the employee creation/update
+        print(f"[hr/crud] Failed to publish salary.processed for employee {employee.id}: {exc}")
+
+
 
 def get_employees(
     db: Session,
@@ -67,6 +89,8 @@ def create_employee(db: Session, data: EmployeeCreate) -> Employee:
         )
 
     # Check if user is already linked to an employee
+
+
     existing = get_employee_by_user_id(db, data.user_id)
     if existing:
         raise HTTPException(
@@ -83,15 +107,6 @@ def create_employee(db: Session, data: EmployeeCreate) -> Employee:
                 detail=f"Department with id {data.department_id} not found",
             )
 
-    # Validate role if provided
-    if data.role_id:
-        role = db.query(Role).filter(Role.id == data.role_id).first()
-        if not role:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Role with id {data.role_id} not found",
-            )
-
     employee_code = data.employee_code or generate_employee_code(db)
 
     employee = Employee(
@@ -99,7 +114,6 @@ def create_employee(db: Session, data: EmployeeCreate) -> Employee:
         employee_code=employee_code,
         phone=data.phone,
         department_id=data.department_id,
-        role_id=data.role_id,
         joining_date=data.joining_date,
         salary=data.salary,
         status=data.status,
@@ -107,6 +121,10 @@ def create_employee(db: Session, data: EmployeeCreate) -> Employee:
     db.add(employee)
     db.commit()
     db.refresh(employee)
+
+    # Publish event so Accounts can create journal/ledger entry via the correct flow.
+    _publish_salary_event(employee)
+
     return employee
 
 
@@ -141,20 +159,16 @@ def update_employee(db: Session, employee_id: int, data: EmployeeUpdate) -> Empl
                 detail=f"Department with id {update_data['department_id']} not found",
             )
 
-    # Validate role if provided
-    if "role_id" in update_data and update_data["role_id"] is not None:
-        role = db.query(Role).filter(Role.id == update_data["role_id"]).first()
-        if not role:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Role with id {update_data['role_id']} not found",
-            )
-
     for key, value in update_data.items():
         setattr(employee, key, value)
 
     db.commit()
     db.refresh(employee)
+
+    # If salary changed, publish event so Accounts can create journal/ledger entry.
+    if "salary" in update_data:
+        _publish_salary_event(employee)
+
     return employee
 
 
@@ -165,74 +179,11 @@ def delete_employee(db: Session, employee_id: int) -> bool:
     db.delete(employee)
     db.commit()
     return True
+# ── Role lookup (used by recruitment module) ──
 
 
-# ──────────────────────────────────────────────
-# Role CRUD
-# ──────────────────────────────────────────────
-
-
-def get_roles(db: Session) -> list[Role]:
-    return db.query(Role).order_by(Role.name).all()
-
-
-def get_role(db: Session, role_id: int) -> Role | None:
+def get_role(db: Session, role_id: int):
     return db.query(Role).filter(Role.id == role_id).first()
-
-
-def create_role(db: Session, data) -> Role:
-    existing = db.query(Role).filter(Role.name == data.name).first()
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Role '{data.name}' already exists",
-        )
-    role = Role(name=data.name, description=data.description)
-    db.add(role)
-    db.commit()
-    db.refresh(role)
-    return role
-
-
-def update_role(db: Session, role_id: int, data) -> Role | None:
-    role = db.query(Role).filter(Role.id == role_id).first()
-    if not role:
-        return None
-
-    update_data = data.model_dump(exclude_unset=True)
-
-    if "name" in update_data and update_data["name"] != role.name:
-        existing = db.query(Role).filter(Role.name == update_data["name"]).first()
-        if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Role '{update_data['name']}' already exists",
-            )
-
-    for key, value in update_data.items():
-        setattr(role, key, value)
-
-    db.commit()
-    db.refresh(role)
-    return role
-
-
-def delete_role(db: Session, role_id: int) -> bool:
-    role = db.query(Role).filter(Role.id == role_id).first()
-    if not role:
-        return False
-
-    # Check if any employees reference this role
-    employees_with_role = db.query(Employee).filter(Employee.role_id == role_id).count()
-    if employees_with_role > 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot delete role: {employees_with_role} employee(s) are assigned to it",
-        )
-
-    db.delete(role)
-    db.commit()
-    return True
 
 
 # ──────────────────────────────────────────────

@@ -48,7 +48,6 @@ if settings.ENVIRONMENT == 'development':
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-
 # Log long-running queries for monitoring
 @event.listens_for(engine, "before_cursor_execute")
 def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
@@ -63,8 +62,6 @@ def after_cursor_execute(conn, cursor, statement, parameters, context, executema
         logger.warning(f"SLOW QUERY {total:.3f}s: {statement[:200]}")
     elif total >= 0.5:
         logger.info(f"Slow query {total:.3f}s: {statement[:200]}")
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def commit_or_rollback(db: Session):
     try:
         db.commit()

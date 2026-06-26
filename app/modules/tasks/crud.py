@@ -27,7 +27,7 @@ def _enrich_tasks_with_employees(db: Session, tasks: list[Task]) -> list[Task]:
 
             employees = (
                 db.query(Employee)
-                .options(joinedload(Employee.user), joinedload(Employee.department), joinedload(Employee.role))
+                .options(joinedload(Employee.user), joinedload(Employee.department))
                 .filter(Employee.id.in_(assignee_ids))
                 .all()
             )
@@ -39,7 +39,7 @@ def _enrich_tasks_with_employees(db: Session, tasks: list[Task]) -> list[Task]:
                     emp.user.full_name if emp.user else None,
                     emp.user.email if emp.user else None,
                     emp.department.name if emp.department else None,
-                    emp.role.name if emp.role else None,
+                    None,  # designation - Employee model has no role relationship
                 )
 
             # Attach to each task

@@ -101,28 +101,6 @@ class Activity(Base):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
 
-class LogEntry(Base):
-    __tablename__ = "log_entries"
-
-    id = Column(String, primary_key=True, index=True)
-    entity_type = Column(String, nullable=False)
-    entity_id = Column(String, nullable=False, index=True)
-    log_type = Column(String, nullable=False)  # lead, client, remark, note, system
-    title = Column(String, nullable=False)
-    description = Column(Text, nullable=True)
-    remarks = Column(Text, nullable=True)
-    created_by = Column(String, nullable=True)
-    meta_data = Column(JSON, default=dict, nullable=False)
-
-    created_at = Column(DateTime, default=func.now(), nullable=False)
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
-
-    __table_args__ = (
-        Index("ix_log_entries_entity", "entity_type", "entity_id"),
-        Index("ix_log_entries_log_type", "log_type"),
-    )
-
-
 class Pipeline(Base):
     __tablename__ = "pipelines"
 

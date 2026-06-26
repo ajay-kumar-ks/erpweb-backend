@@ -2,14 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
 from sqlalchemy.orm import joinedload
+from sqlalchemy.orm.attributes import flag_modified
 import uuid
 from datetime import datetime
 from typing import List, Optional
 
 from app.core.database import get_db
-from app.modules.auth.routers import get_current_user
 from app.modules.auth.models import User
-from .db_models import Contact, Tag, Activity, Lead, Pipeline, Phase, Client, PipelineAssignment, LogEntry
+from app.modules.auth.routers import get_current_user
+from .db_models import Contact, Tag, Activity, Lead, Pipeline, Phase, Client, PipelineAssignment
 from .schemas import (
     ContactCreateSchema,
     ContactUpdateSchema,
@@ -34,8 +35,6 @@ from .schemas import (
     ClientUpdateSchema,
     ClientSchema,
     ClientDetailSchema,
-    LogEntryCreateSchema,
-    LogEntrySchema,
     PipelineAssignmentSchema,
     PipelineAssignmentCreateSchema,
     PipelineAssignmentUpdateSchema,
@@ -65,8 +64,46 @@ pipelines_router = APIRouter(prefix="/pipelines", tags=["pipelines"])
 
 
 @pipelines_router.get("/", response_model=List[PipelineSchema])
-async def list_pipelines(db: Session = Depends(get_db)):
-    return db.query(Pipeline).all()
+async def list_pipelines(
+    department_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    List pipelines visible to the requesting user. If `department_id` is provided
+    it will be used to filter pipelines. Otherwise non-admin users will have
+    their department inferred from their HR employee profile and only pipelines
+    assigned to that department will be returned. Admins see all pipelines.
+    """
+    # Admins should see all pipelines unless a specific department filter is requested
+    if getattr(current_user, 'is_admin', False) and department_id is None:
+        return db.query(Pipeline).all()
+
+    # Derive department from current user's employee record when not supplied
+    effective_dept = department_id
+    if effective_dept is None:
+        try:
+            # import here to avoid circular imports at module import time
+            from app.modules.hr.crud import get_employee_by_user_id
+            employee = get_employee_by_user_id(db, current_user.id)
+            effective_dept = getattr(employee, 'department_id', None) if employee else None
+        except Exception:
+            effective_dept = None
+
+    # If no effective department, return empty set for non-admin users
+    if effective_dept is None:
+        return []
+
+    # Find pipelines that include this department in their assignment config
+    assignments = db.query(PipelineAssignment).all()
+    allowed_pipeline_ids = {
+        assignment.pipeline_id
+        for assignment in assignments
+        if any(dept.get("department_id") == effective_dept for dept in assignment.departments_config)
+    }
+    if not allowed_pipeline_ids:
+        return []
+    return db.query(Pipeline).filter(Pipeline.id.in_(allowed_pipeline_ids)).all()
 
 
 @pipelines_router.post("/", response_model=PipelineSchema, status_code=201)
@@ -239,7 +276,6 @@ async def apply_pipeline_assignment(
     pipeline_id: str,
     data: AssignToPipelineSchema,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ):
     """Apply assignment rules to existing leads in the pipeline.
     - round_robin: Distribute unassigned leads among selected members
@@ -288,31 +324,9 @@ async def apply_pipeline_assignment(
         # Assign round-robin to all existing leads in the pipeline
         idx = dept_config.get("round_robin_index", 0)
         for lead in leads_to_update:
-            old_assignee = lead.assignee
-            new_assignee = members[idx % len(members)]
-            lead.assignee = new_assignee
+            lead.assignee = members[idx % len(members)]
             idx += 1
             updated_count += 1
-            # create a log entry for this assignee change
-            try:
-                current_user_name = None
-                if current_user:
-                    current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
-                log_payload = LogEntryCreateSchema(
-                    log_type='assignee_changed',
-                    title=f"Assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
-                    description=f"Lead assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
-                    remarks=None,
-                    created_by=current_user_name,
-                    meta_data={
-                        'from_assignee': old_assignee,
-                        'to_assignee': new_assignee,
-                    },
-                )
-                _create_log_entry(db, 'lead', lead.id, log_payload)
-            except Exception:
-                # non-fatal logging error
-                pass
 
         # Update the round_robin_index in the stored config
         for dc in assignment.departments_config:
@@ -333,27 +347,8 @@ async def apply_pipeline_assignment(
         assignee_name = emp.user.full_name or emp.user.username or str(emp.id)
 
         for lead in leads_to_update:
-            old_assignee = lead.assignee
             lead.assignee = assignee_name
             updated_count += 1
-            try:
-                current_user_name = None
-                if current_user:
-                    current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
-                log_payload = LogEntryCreateSchema(
-                    log_type='assignee_changed',
-                    title=f"Assignee changed from {old_assignee or 'Unassigned'} to {assignee_name or 'Unassigned'}",
-                    description=f"Lead assignee changed from {old_assignee or 'Unassigned'} to {assignee_name or 'Unassigned'}",
-                    remarks=None,
-                    created_by=current_user_name,
-                    meta_data={
-                        'from_assignee': old_assignee,
-                        'to_assignee': assignee_name,
-                    },
-                )
-                _create_log_entry(db, 'lead', lead.id, log_payload)
-            except Exception:
-                pass
 
     else:
         raise HTTPException(status_code=400, detail=f"Unsupported assignment mode: {data.assignment_mode}")
@@ -399,74 +394,6 @@ async def create_lead(lead_data: LeadCreateSchema, db: Session = Depends(get_db)
     return lead
 
 
-def _create_log_entry(db: Session, entity_type: str, entity_id: str, log_data: LogEntryCreateSchema):
-    log_entry = LogEntry(
-        id=str(uuid.uuid4()),
-        entity_type=entity_type,
-        entity_id=entity_id,
-        log_type=log_data.log_type,
-        title=log_data.title or f"{entity_type.title()} {log_data.log_type}",
-        description=log_data.description,
-        remarks=log_data.remarks,
-        created_by=log_data.created_by,
-        meta_data=log_data.meta_data or {},
-    )
-    db.add(log_entry)
-    db.commit()
-    db.refresh(log_entry)
-    return log_entry
-
-
-@leads_router.get("/{lead_id}/logs", response_model=List[LogEntrySchema])
-async def list_lead_logs(
-    lead_id: str,
-    log_type: Optional[str] = Query(None),
-    limit: int = Query(50, ge=1, le=200),
-    db: Session = Depends(get_db),
-):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
-
-    query = db.query(LogEntry).filter(LogEntry.entity_type == 'lead', LogEntry.entity_id == lead_id)
-    if log_type:
-        query = query.filter(LogEntry.log_type == log_type)
-    return query.order_by(LogEntry.created_at.desc()).limit(limit).all()
-
-
-@leads_router.post("/{lead_id}/logs", response_model=LogEntrySchema, status_code=201)
-async def create_lead_log(lead_id: str, log_data: LogEntryCreateSchema, db: Session = Depends(get_db)):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
-    return _create_log_entry(db, 'lead', lead_id, log_data)
-
-
-@clients_router.get("/{client_id}/logs", response_model=List[LogEntrySchema])
-async def list_client_logs(
-    client_id: str,
-    log_type: Optional[str] = Query(None),
-    limit: int = Query(50, ge=1, le=200),
-    db: Session = Depends(get_db),
-):
-    client = db.query(Client).filter(Client.id == client_id).first()
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
-
-    query = db.query(LogEntry).filter(LogEntry.entity_type == 'client', LogEntry.entity_id == client_id)
-    if log_type:
-        query = query.filter(LogEntry.log_type == log_type)
-    return query.order_by(LogEntry.created_at.desc()).limit(limit).all()
-
-
-@clients_router.post("/{client_id}/logs", response_model=LogEntrySchema, status_code=201)
-async def create_client_log(client_id: str, log_data: LogEntryCreateSchema, db: Session = Depends(get_db)):
-    client = db.query(Client).filter(Client.id == client_id).first()
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
-    return _create_log_entry(db, 'client', client_id, log_data)
-
-
 @leads_router.get("/", response_model=List[LeadSchema])
 async def list_leads(
     skip: int = Query(0, ge=0),
@@ -477,8 +404,7 @@ async def list_leads(
     source: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
     orphaned: Optional[bool] = Query(None, description="Filter leads with pipeline_id set but phase_id null"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     query = db.query(Lead).options(joinedload(Lead.contact), joinedload(Lead.pipeline), joinedload(Lead.phase))
 
@@ -496,25 +422,6 @@ async def list_leads(
     if orphaned:
         query = query.filter(Lead.pipeline_id.isnot(None), Lead.phase_id.is_(None))
 
-    # Enforce visibility: non-admins only see leads assigned to them
-    try:
-        if not getattr(current_user, 'is_admin', False):
-            filters = []
-            if getattr(current_user, 'full_name', None):
-                filters.append(Lead.assignee == current_user.full_name)
-            if getattr(current_user, 'username', None):
-                filters.append(Lead.assignee == current_user.username)
-                # allow partial matches against username
-                filters.append(Lead.assignee.ilike(f"%{current_user.username}%"))
-            if filters:
-                query = query.filter(or_(*filters))
-            else:
-                # no identifying info — return empty result set
-                query = query.filter(False)
-    except Exception:
-        # If anything goes wrong determining user visibility, default to safe behavior
-        query = query.filter(False)
-
     leads = query.offset(skip).limit(limit).all()
     return leads
 
@@ -527,6 +434,40 @@ async def get_lead(lead_id: str, db: Session = Depends(get_db)):
     return lead
 
 
+def _normalize_lead_log_entry(entry: dict) -> dict:
+    if not isinstance(entry, dict):
+        entry = {}
+    normalized = dict(entry)
+    normalized['log_type'] = normalized.get('log_type') or normalized.get('type')
+    normalized['title'] = normalized.get('title') or normalized.get('message') or normalized['log_type'] or 'Log entry'
+    normalized['description'] = normalized.get('description') or normalized.get('message') or ''
+    normalized['meta_data'] = normalized.get('meta_data') or normalized.get('metaData') or {}
+    normalized['created_at'] = normalized.get('created_at') or normalized.get('timestamp') or datetime.utcnow().isoformat()
+    normalized['created_by'] = normalized.get('created_by') or normalized.get('created_by_name') or None
+    if 'id' not in normalized:
+        normalized['id'] = str(uuid.uuid4())
+    return normalized
+
+
+@leads_router.get("/{lead_id}/logs")
+async def get_lead_logs(lead_id: str, db: Session = Depends(get_db)):
+    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+
+    history = (lead.extra_data or {}).get('history', [])
+    if not isinstance(history, list):
+        history = []
+
+    logs = [
+        _normalize_lead_log_entry(entry)
+        for entry in history
+        if isinstance(entry, dict)
+    ]
+    logs.sort(key=lambda item: item.get('created_at', ''), reverse=True)
+    return logs
+
+
 @leads_router.put("/{lead_id}", response_model=LeadSchema)
 async def update_lead(
     lead_id: str,
@@ -537,34 +478,78 @@ async def update_lead(
     lead = db.query(Lead).filter(Lead.id == lead_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
-
     update_data = lead_data.dict(exclude_unset=True)
     old_assignee = lead.assignee
-    new_assignee = update_data.get('assignee', old_assignee)
+    old_extra_data = lead.extra_data or {}
+    old_remark = old_extra_data.get('current_remark')
 
+    new_assignee = update_data.get('assignee')
     for key, value in update_data.items():
         setattr(lead, key, value)
     db.add(lead)
     db.commit()
     db.refresh(lead)
 
-    if 'assignee' in update_data and old_assignee != new_assignee:
-        try:
+    if 'extra_data' in update_data:
+        new_extra_data = update_data.get('extra_data') or {}
+        new_remark = new_extra_data.get('current_remark')
+        if new_remark is not None and old_remark != new_remark:
             current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
-            log_payload = LogEntryCreateSchema(
-                log_type='assignee_changed',
-                title=f"Assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
-                description=f"Lead assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
-                remarks=None,
-                created_by=current_user_name,
-                meta_data={
-                    'from_assignee': old_assignee,
-                    'to_assignee': new_assignee,
+            lead.extra_data = dict(lead.extra_data or {})
+            history = lead.extra_data.get('history', [])
+            if not isinstance(history, list):
+                history = []
+
+            history.append({
+                'type': 'remark',
+                'log_type': 'remark',
+                'title': 'Remark added' if old_remark is None else 'Remark updated',
+                'description': 'Initial remark added' if old_remark is None else f'Remark updated by {current_user_name}',
+                'remarks': new_remark,
+                'meta_data': {
+                    'old_remark': old_remark,
+                    'new_remark': new_remark,
                 },
-            )
-            _create_log_entry(db, 'lead', lead.id, log_payload)
-        except Exception:
-            pass
+                'created_by': current_user_name,
+                'created_at': datetime.utcnow().isoformat(),
+            })
+            lead.extra_data['history'] = history
+            lead.extra_data['current_remark_updated_by'] = current_user_name
+            lead.extra_data['current_remark_updated_at'] = datetime.utcnow().isoformat()
+            flag_modified(lead, 'extra_data')
+            lead.extra_data = lead.extra_data or {}
+            lead.extra_data['current_remark_updated_by'] = 'system'
+            lead.extra_data['current_remark_updated_at'] = datetime.utcnow().isoformat()
+            db.add(lead)
+            db.commit()
+            db.refresh(lead)
+
+    if 'assignee' in update_data and old_assignee != new_assignee:
+        current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
+        lead.extra_data = dict(lead.extra_data or {})
+        history = lead.extra_data.get('history', [])
+        if not isinstance(history, list):
+            history = []
+
+        history.append({
+            'type': 'assignee_changed',
+            'log_type': 'assignee_changed',
+            'title': f"Assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
+            'description': f"Lead assignee changed from {old_assignee or 'Unassigned'} to {new_assignee or 'Unassigned'}",
+            'remarks': None,
+            'created_by': current_user_name,
+            'meta_data': {
+                'from_assignee': old_assignee,
+                'to_assignee': new_assignee,
+            },
+            'created_at': datetime.utcnow().isoformat(),
+        })
+        lead.extra_data['history'] = history
+        flag_modified(lead, 'extra_data')
+        db.add(lead)
+        db.commit()
+        db.refresh(lead)
+    # assignee change notification removed — LogEntryCreateSchema was never implemented
 
     return lead
 
@@ -579,7 +564,12 @@ async def delete_lead(lead_id: str, db: Session = Depends(get_db)):
 
 
 @leads_router.put("/{lead_id}/move")
-async def move_lead(lead_id: str, phase_id: str = Query(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+async def move_lead(
+    lead_id: str,
+    phase_id: str = Query(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     lead = db.query(Lead).filter(Lead.id == lead_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
@@ -591,18 +581,36 @@ async def move_lead(lead_id: str, phase_id: str = Query(...), db: Session = Depe
 
     old_phase_id = lead.phase_id
     lead.phase_id = phase_id
-    extra_data = lead.extra_data or {}
+    extra_data = dict(lead.extra_data or {})
     history = extra_data.get('history', [])
+    if not isinstance(history, list):
+        history = []
+
+    old_phase_name = None
+    if old_phase_id:
+        old_phase = db.query(Phase).filter(Phase.id == old_phase_id).first()
+        old_phase_name = old_phase.name if old_phase else None
+    new_phase_name = destination_phase.name
+
+    current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
     history.append({
         'type': 'phase_changed',
-        'message': f"Moved from {old_phase_id or 'None'} to {phase_id}",
-        'from_phase_id': old_phase_id,
-        'to_phase_id': phase_id,
-        'timestamp': datetime.utcnow().isoformat(),
+        'log_type': 'phase_changed',
+        'title': f"Moved from {old_phase_name or old_phase_id or 'None'} to {new_phase_name or phase_id}",
+        'description': f"Lead moved from {old_phase_name or old_phase_id or 'None'} to {new_phase_name or phase_id}",
+        'meta_data': {
+            'from_phase_id': old_phase_id,
+            'to_phase_id': phase_id,
+            'from_phase_name': old_phase_name,
+            'to_phase_name': new_phase_name,
+        },
+        'created_by': current_user_name,
+        'created_at': datetime.utcnow().isoformat(),
     })
     extra_data['history'] = history
     extra_data['converted'] = destination_phase.creates_client
     lead.extra_data = extra_data
+    flag_modified(lead, 'extra_data')
 
     db.add(lead)
     db.flush()
@@ -627,48 +635,7 @@ async def move_lead(lead_id: str, phase_id: str = Query(...), db: Session = Depe
 
     db.commit()
     db.refresh(lead)
-    # Create a LogEntry recording the phase change with actor info and readable phase names
-    try:
-        current_user_name = None
-        if current_user:
-            current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
-
-        # Resolve readable phase names where possible
-        from_phase_name = None
-        to_phase_name = None
-        if old_phase_id:
-            old_phase = db.query(Phase).filter(Phase.id == old_phase_id).first()
-            if old_phase:
-                from_phase_name = old_phase.name
-        if destination_phase:
-            to_phase_name = destination_phase.name
-
-        title_parts = []
-        title_parts.append(from_phase_name or old_phase_id or 'None')
-        title_parts.append('→')
-        title_parts.append(to_phase_name or phase_id)
-        title = 'Moved ' + ' '.join(title_parts)
-
-        description = f"Lead moved from {from_phase_name or old_phase_id or 'None'} to {to_phase_name or phase_id}"
-
-        log_payload = LogEntryCreateSchema(
-            log_type='phase_changed',
-            title=title,
-            description=description,
-            remarks=None,
-            created_by=current_user_name,
-            meta_data={
-                "from_phase_id": old_phase_id,
-                "from_phase_name": from_phase_name,
-                "to_phase_id": phase_id,
-                "to_phase_name": to_phase_name,
-            },
-        )
-        _create_log_entry(db, 'lead', lead.id, log_payload)
-    except Exception:
-        # Logging failure should not block the move operation
-        pass
-
+    
     response = {"success": True, "lead_id": lead.id, "phase_id": phase_id}
     if created_client_id:
         response["client_created"] = True
@@ -678,7 +645,7 @@ async def move_lead(lead_id: str, phase_id: str = Query(...), db: Session = Depe
 
 
 @leads_router.post("/{lead_id}/convert")
-async def convert_lead(lead_id: str, db: Session = Depends(get_db)):
+async def convert_lead(lead_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     lead = db.query(Lead).filter(Lead.id == lead_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
@@ -686,10 +653,17 @@ async def convert_lead(lead_id: str, db: Session = Depends(get_db)):
     # Update lead history
     extra_data = lead.extra_data or {}
     history = extra_data.get('history', [])
+    if not isinstance(history, list):
+        history = []
+
+    current_user_name = getattr(current_user, 'full_name', None) or getattr(current_user, 'username', None) or str(getattr(current_user, 'id', ''))
     history.append({
-        'type': 'converted',
-        'message': 'Lead converted to Client',
-        'timestamp': datetime.utcnow().isoformat(),
+        'type': 'conversion',
+        'log_type': 'conversion',
+        'title': 'Lead converted to Client',
+        'description': 'Lead converted to Client',
+        'created_by': current_user_name,
+        'created_at': datetime.utcnow().isoformat(),
     })
     extra_data['history'] = history
     extra_data['converted'] = True
@@ -1237,6 +1211,115 @@ async def list_contacts(
     return contacts
 
 
+# ============= ACTIVITIES ENDPOINTS =============
+
+@router.get("/activities", response_model=List[ActivitySchema])
+async def list_activities(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(25, ge=1, le=500),
+    db: Session = Depends(get_db)
+):
+    """List recent activities across contacts"""
+    query = db.query(Activity).order_by(Activity.created_at.desc())
+    activities = query.offset(skip).limit(limit).all()
+    return activities
+
+
+@router.post("/{contact_id}/activities", response_model=ActivitySchema, status_code=201)
+async def add_activity(
+    contact_id: str,
+    activity_data: ActivityCreateSchema,
+    db: Session = Depends(get_db)
+):
+    """Add activity to contact (call, email, meeting, note)"""
+    
+    contact = db.query(Contact).filter(Contact.id == contact_id).first()
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    
+    activity = Activity(
+        id=str(uuid.uuid4()),
+        contact_id=contact_id,
+        activity_type=activity_data.activity_type,
+        title=activity_data.title,
+        description=activity_data.description,
+        follow_up_date=activity_data.follow_up_date,
+        meta_data=activity_data.meta_data or {},
+    )
+    
+    db.add(activity)
+    db.commit()
+    db.refresh(activity)
+    return activity
+
+
+@router.get("/{contact_id}/activities", response_model=List[ActivitySchema])
+async def get_activities(contact_id: str, db: Session = Depends(get_db)):
+    """Get activity timeline for contact"""
+    
+    contact = db.query(Contact).filter(Contact.id == contact_id).first()
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    
+    activities = db.query(Activity).filter(Activity.contact_id == contact_id).order_by(Activity.created_at.desc()).all()
+    return activities
+
+
+@router.get("/notifications/followups")
+async def get_due_followups(limit: int = 10, db: Session = Depends(get_db)):
+    """Return due follow-up activities (follow_up_date <= now)."""
+    now = datetime.utcnow()
+    base_q = db.query(Activity).filter(Activity.follow_up_date != None, Activity.follow_up_date <= now)
+    total = base_q.count()
+    items = base_q.order_by(Activity.follow_up_date.asc()).limit(limit).all()
+
+    results = []
+    for a in items:
+        results.append({
+            "id": a.id,
+            "contact_id": a.contact_id,
+            "title": a.title,
+            "follow_up_date": a.follow_up_date.isoformat() if a.follow_up_date else None,
+            "activity_type": a.activity_type,
+        })
+
+    return {"count": total, "items": results}
+
+
+# ============= TAGS ENDPOINTS =============
+
+@router.get("/tags", response_model=List[TagSchema])
+async def list_tags(db: Session = Depends(get_db)):
+    """List all available tags"""
+    tags = db.query(Tag).all()
+    return tags
+
+
+@router.post("/tags", response_model=TagSchema, status_code=201)
+async def create_tag(tag_data: TagBaseSchema, db: Session = Depends(get_db)):
+    """Create a new tag"""
+    
+    existing = db.query(Tag).filter(Tag.name == tag_data.name).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Tag already exists")
+    
+    tag = Tag(
+        id=str(uuid.uuid4()),
+        name=tag_data.name,
+        color=tag_data.color or "#6366f1"
+    )
+    db.add(tag)
+    db.commit()
+    db.refresh(tag)
+    return tag
+
+
+# Health check
+@router.get("/health")
+async def health():
+    return {"status": "CRM module ready"}
+
+
 @router.get("/{contact_id}", response_model=ContactDetailSchema)
 async def get_contact(contact_id: str, db: Session = Depends(get_db)):
     """Get contact details with activity timeline"""
@@ -1397,111 +1480,4 @@ async def bulk_action(action_data: BulkActionSchema, db: Session = Depends(get_d
     return {"success": True, "count": len(contacts)}
 
 
-# ============= ACTIVITIES ENDPOINTS =============
-
-@router.post("/{contact_id}/activities", response_model=ActivitySchema, status_code=201)
-async def add_activity(
-    contact_id: str,
-    activity_data: ActivityCreateSchema,
-    db: Session = Depends(get_db)
-):
-    """Add activity to contact (call, email, meeting, note)"""
-    
-    contact = db.query(Contact).filter(Contact.id == contact_id).first()
-    if not contact:
-        raise HTTPException(status_code=404, detail="Contact not found")
-    
-    activity = Activity(
-        id=str(uuid.uuid4()),
-        contact_id=contact_id,
-        activity_type=activity_data.activity_type,
-        title=activity_data.title,
-        description=activity_data.description,
-        follow_up_date=activity_data.follow_up_date,
-        meta_data=activity_data.meta_data or {},
-    )
-    
-    db.add(activity)
-    db.commit()
-    db.refresh(activity)
-    return activity
-
-
-@router.get("/{contact_id}/activities", response_model=List[ActivitySchema])
-async def get_activities(contact_id: str, db: Session = Depends(get_db)):
-    """Get activity timeline for contact"""
-    
-    contact = db.query(Contact).filter(Contact.id == contact_id).first()
-    if not contact:
-        raise HTTPException(status_code=404, detail="Contact not found")
-    
-    activities = db.query(Activity).filter(Activity.contact_id == contact_id).order_by(Activity.created_at.desc()).all()
-    return activities
-
-
-@router.get("/activities", response_model=List[ActivitySchema])
-async def list_activities(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(25, ge=1, le=500),
-    db: Session = Depends(get_db)
-):
-    """List recent activities across contacts"""
-    query = db.query(Activity).order_by(Activity.created_at.desc())
-    activities = query.offset(skip).limit(limit).all()
-    return activities
-
-
-@router.get("/notifications/followups")
-async def get_due_followups(limit: int = 10, db: Session = Depends(get_db)):
-    """Return due follow-up activities (follow_up_date <= now)."""
-    now = datetime.utcnow()
-    base_q = db.query(Activity).filter(Activity.follow_up_date != None, Activity.follow_up_date <= now)
-    total = base_q.count()
-    items = base_q.order_by(Activity.follow_up_date.asc()).limit(limit).all()
-
-    results = []
-    for a in items:
-        results.append({
-            "id": a.id,
-            "contact_id": a.contact_id,
-            "title": a.title,
-            "follow_up_date": a.follow_up_date.isoformat() if a.follow_up_date else None,
-            "activity_type": a.activity_type,
-        })
-
-    return {"count": total, "items": results}
-
-
-# ============= TAGS ENDPOINTS =============
-
-@router.get("/tags", response_model=List[TagSchema])
-async def list_tags(db: Session = Depends(get_db)):
-    """List all available tags"""
-    tags = db.query(Tag).all()
-    return tags
-
-
-@router.post("/tags", response_model=TagSchema, status_code=201)
-async def create_tag(tag_data: TagBaseSchema, db: Session = Depends(get_db)):
-    """Create a new tag"""
-    
-    existing = db.query(Tag).filter(Tag.name == tag_data.name).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Tag already exists")
-    
-    tag = Tag(
-        id=str(uuid.uuid4()),
-        name=tag_data.name,
-        color=tag_data.color or "#6366f1"
-    )
-    db.add(tag)
-    db.commit()
-    db.refresh(tag)
-    return tag
-
-
-# Health check
-@router.get("/health")
-async def health():
-    return {"status": "CRM module ready"}
 

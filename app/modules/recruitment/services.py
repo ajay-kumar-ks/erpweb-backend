@@ -2,18 +2,17 @@ from app.modules.recruitment.db_models import Candidate
 
 
 def format_candidate_response(candidate: Candidate) -> dict:
-    role_name = None
-    if candidate.role:
-        role_name = candidate.role.name
+    department_name = None
+    if candidate.department:
+        department_name = candidate.department.name
 
     return {
         "id": candidate.id,
         "full_name": candidate.full_name,
         "email": candidate.email,
         "phone": candidate.phone,
-        "position_applied": candidate.position_applied,
-        "role_id": candidate.role_id,
-        "role_name": role_name,
+        "department_id": candidate.department_id,
+        "department_name": department_name,
         "experience_years": candidate.experience_years,
         "current_stage": candidate.current_stage,
         "pipeline_stages": candidate.pipeline_stages,
